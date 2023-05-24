@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Visual Zen++", "Visual Zen++\Visual Zen++.vcxproj", "{84CCD655-7842-47B6-A5B4-A5DCB746917D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Debug|x64.ActiveCfg = Debug|x64
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Debug|x64.Build.0 = Debug|x64
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Debug|x86.ActiveCfg = Debug|Win32
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Debug|x86.Build.0 = Debug|Win32
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Release|x64.ActiveCfg = Release|x64
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Release|x64.Build.0 = Release|x64
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Release|x86.ActiveCfg = Release|Win32
+		{84CCD655-7842-47B6-A5B4-A5DCB746917D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E004F4AF-79E6-4C70-9EE1-DC39969CA52D}
+	EndGlobalSection
+EndGlobal

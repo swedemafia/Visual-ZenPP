@@ -1,0 +1,251 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+DLG_MAIN DIALOGEX 0, 0, 584, 323
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+MENU MENU_MAIN
+FONT 11, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Device Manager",GROUP_DEVICE_MANAGER,11,7,268,145
+    GROUPBOX        "Slots Manager",GROUP_SLOTS_MANAGER,285,7,292,309
+    CONTROL         "",RICHEDIT_OUTPUT,"RichEdit20W",WS_VSCROLL | 0x844,16,163,258,147,WS_EX_CLIENTEDGE
+    LISTBOX         LISTBOX_SCRIPTS,292,20,277,104,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Clear &Bluetooth",1003,292,275,64,14,WS_DISABLED
+    LTEXT           "DualShock4 Lightbar Brightness:",1018,24,112,107,10
+    CONTROL         "Use PS4 Speciality",1007,"Button",BS_AUTORADIOBUTTON | WS_DISABLED | WS_TABSTOP,134,128,107,10
+    CONTROL         "Use PlayStation Remote Play",1008,"Button",BS_AUTORADIOBUTTON | WS_DISABLED | WS_TABSTOP,24,128,107,10
+    LTEXT           "Emulator Output Protocol:",1014,24,23,107,10
+    LTEXT           "Remote Slot Change:",1016,24,59,107,10
+    LTEXT           "Operational Mode:",1015,24,41,107,10
+    GROUPBOX        "PlayStation Settings",-1,17,95,255,51
+    LTEXT           "Virtual Machine (VM) Speed:",1017,24,79,91,10
+    PUSHBUTTON      "&Erase Memory Slots",1004,363,275,64,14,WS_DISABLED
+    PUSHBUTTON      "&Factory Reset",1005,434,275,64,14,WS_DISABLED
+    PUSHBUTTON      "&Reset Device",1006,505,275,64,14,WS_DISABLED
+    COMBOBOX        1010,137,40,131,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",1012,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_DISABLED | WS_TABSTOP,134,77,116,15
+    CONTROL         "",1013,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_DISABLED | WS_TABSTOP,134,110,116,15
+    LTEXT           "",1034,252,79,17,8
+    LTEXT           "",1033,252,112,17,8
+    CTEXT           "",1022,292,130,64,64,WS_BORDER
+    CTEXT           "",1023,363,130,64,64,WS_BORDER
+    CTEXT           "",1024,434,130,64,64,WS_BORDER
+    CTEXT           "",1026,292,202,64,64,WS_BORDER
+    CTEXT           "",1027,363,202,64,64,WS_BORDER
+    CTEXT           "",1025,505,130,64,64,WS_BORDER
+    CTEXT           "",1028,434,202,64,64,WS_BORDER
+    CTEXT           "",1029,505,202,64,64,WS_BORDER
+    RTEXT           "",1031,476,299,93,8
+    LTEXT           "",1032,292,299,86,8
+    GROUPBOX        "Output",1021,11,154,268,162
+    COMBOBOX        1011,137,58,131,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        1009,137,21,131,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    DLG_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 577
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 316
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+DLG_MAIN AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+MENU_MAIN MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Clear Output",               MENU_FILE_CLEAR_OUTPUT
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       MENU_FILE_EXIT
+    END
+    POPUP "&Connection"
+    BEGIN
+        MENUITEM "&Reconnect to device...\tCtrl+R", MENU_CONNECTION_RECONNECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Disconnect",                 MENU_CONNECTION_DISCONNECT, INACTIVE
+    END
+    POPUP "&Program"
+    BEGIN
+        MENUITEM "&Load and Run...",            MENU_PROGRAM_LOAD_AND_RUN, INACTIVE
+        MENUITEM SEPARATOR
+        MENUITEM "&Program Device\tCtrl+P",     MENU_PROGRAM_PROGRAM_DEVICE, INACTIVE
+    END
+    POPUP "&Device"
+    BEGIN
+        MENUITEM "&Device Monitor\tCtrl+D",     MENU_DEVICE_MONITOR, INACTIVE
+        MENUITEM "Serial &Number",              MENU_DEVICE_SERIAL_NUMBER, INACTIVE
+        MENUITEM SEPARATOR
+        MENUITEM "Clear &Bluetooth",            MENU_DEVICE_CLEAR_BLUETOOTH, INACTIVE
+        MENUITEM "&Erase Memory Slots",         MENU_DEVICE_ERASE_MEMORY_SLOTS, INACTIVE
+        MENUITEM "&Factory Reset",              MENU_DEVICE_FACTORY_RESET, INACTIVE
+        MENUITEM "&Reset Device",               MENU_DEVICE_RESET, INACTIVE
+        MENUITEM SEPARATOR
+        POPUP "E&mulator Output Protocol"
+        BEGIN
+            MENUITEM "&Auto",                       MENU_DEVICE_EMULATOR_AUTO, CHECKED
+            MENUITEM "&Nintendo Switch",            MENU_DEVICE_EMULATOR_NINTENDOSWITCH
+            MENUITEM "PlayStation &3",              MENU_DEVICE_EMULATOR_PLAYSTATION3
+            MENUITEM "&PlayStation 4/5",            MENU_DEVICE_EMULATOR_PLAYSTATION45
+            MENUITEM "Xbox 3&60",                   MENU_DEVICE_EMULATOR_XBOX360
+            MENUITEM "&Xbox One X/S",               MENU_DEVICE_EMULATOR_XBOXONE, INACTIVE
+        END
+        POPUP "&Operational Mode"
+        BEGIN
+            MENUITEM "&Wheel Mode",                 MENU_DEVICE_OPERATIONAL_WHEEL
+            MENUITEM "&Standard Mode",              MENU_DEVICE_OPERATIONAL_STANDARD, CHECKED
+            MENUITEM "&Tournament Mode",            MENU_DEVICE_OPERATIONAL_TOURNAMENT, INACTIVE
+        END
+        POPUP "Remote Slot &Change"
+        BEGIN
+            MENUITEM "&Disabled",                   MENU_DEVICE_REMOTESLOT_DISABLED, CHECKED
+            MENUITEM "PS/Xbox + &L3/LS",            MENU_DEVICE_REMOTESLOT_LEFTSTICK
+            MENUITEM "PS/Xbox + Shar&e/View",       MENU_DEVICE_REMOTESLOT_SELECT, INACTIVE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "PS4 &Speciality",             MENU_DEVICE_PS4SPECIALITY, INACTIVE
+        MENUITEM "Remote &Play",                MENU_DEVICE_REMOTE_PLAY, INACTIVE
+    END
+    POPUP "&Plugins"
+    BEGIN
+        MENUITEM "&Plugin Manager...",          MENU_PLUGINS_PLUGIN_MANAGER, INACTIVE
+    END
+    POPUP "&About"
+    BEGIN
+        MENUITEM "&Support...",                 MENU_ABOUT_SUPPORT
+        MENUITEM SEPARATOR
+        MENUITEM "&About Zen++...",             MENU_ABOUT_ABOUT, INACTIVE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,1,17
+ PRODUCTVERSION 1,0,1,17
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Asgard"
+            VALUE "FileDescription", "Interoperable USB device application"
+            VALUE "FileVersion", "1.0.1.17"
+            VALUE "InternalName", "Visual.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2023"
+            VALUE "OriginalFilename", "Visual.exe"
+            VALUE "ProductName", "Visual Zen++"
+            VALUE "ProductVersion", "1.0.1.17"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
