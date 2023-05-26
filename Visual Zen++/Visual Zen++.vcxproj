@@ -147,6 +147,8 @@
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="MainDialog.cpp" />
+    <ClCompile Include="RunScriptDialog.cpp" />
+    <ClCompile Include="StatusDialog.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +163,8 @@
     <ClInclude Include="ParseBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RunScriptDialog.h" />
+    <ClInclude Include="StatusDialog.h" />
     <ClInclude Include="StoreBuffer.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,10 @@
 //
 #define DLG_MAIN                        101
 #define MENU_MAIN                       102
+#define DLG_STATUS                      105
+#define DLG_RUNSCRIPT                   106
+#define IDR_MENU1                       107
+#define MENU_POPUP_REMOVE               107
 #define RICHEDIT_OUTPUT                 1001
 #define LISTBOX_SCRIPTS                 1002
 #define BUTTON_CLEAR_BLUETOOTH          1003
@@ -34,10 +38,20 @@
 #define LABEL_SLOT_7                    1028
 #define LABEL_SLOT_8                    1029
 #define LABEL_SERIAL_NUMBER             1030
+#define BUTTON_CYCLE_SLOTS              1030
 #define LABEL_FIRMWARE_VERSION          1031
 #define LABEL_FLASH_MEMORY              1032
+#define LABEL_CURRENT_SLOT              1032
 #define LABEL_DS4_BRIGHTNESS_VALUE      1033
 #define LABEL_VM_SPEED_VALUE            1034
+#define PROGRESS_CURRENT_SLOT           1051
+#define PROGRESS_TOTAL                  1052
+#define LABEL_STATUS_SLOT               1053
+#define LABEL_STATUS_TOTAL              1054
+#define LABEL_PROGRESS_SLOT             1055
+#define LABEL_PROGRESS_TOTAL            1056
+#define LABEL_PERCENTAGE_SLOT           1057
+#define LABEL_PERCENTAGE_TOTAL          1059
 #define MENU_FILE_CLEAR_OUTPUT          40000
 #define MENU_FILE_EXIT                  40001
 #define MENU_CONNECTION_DISCONNECT      40002
@@ -65,17 +79,22 @@
 #define MENU_DEVICE_REMOTE_PLAY         40024
 #define MENU_PROGRAM_LOAD_AND_RUN       40025
 #define MENU_PROGRAM_PROGRAM_DEVICE     40026
-#define MENU_PLUGINS_PLUGIN_MANAGER		40027
-#define MENU_ABOUT_SUPPORT				40028
-#define MENU_ABOUT_ABOUT				40029
+#define MENU_PLUGINS_PLUGIN_MANAGER     40027
+#define MENU_ABOUT_SUPPORT              40028
+#define MENU_ABOUT_ABOUT                40029
+#define ID_DEVICE_CYCLESLOTS            40065
+#define MENU_DEVICE_CYCLE_SLOTS         40066
+#define ID_REMOVE                       40067
+#define ID_REMOVE_REMOVE                40068
+#define MENU_REMOVE                     40069
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        105
-#define _APS_NEXT_COMMAND_VALUE         40065
-#define _APS_NEXT_CONTROL_VALUE         1047
+#define _APS_NEXT_RESOURCE_VALUE        109
+#define _APS_NEXT_COMMAND_VALUE         40070
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -330,68 +330,8 @@ void Communication::UpdateConnectionState(ConnectionState EventCode)
 	switch (EventCode) {
 	case Connection_Disconnected:
 		MainDialog->UpdateCaption("Not connected to any device");
-
-		// Disable menus
-		// 
-		// Connection:
-		EnableMenuItem(MainDialog->MainMenu, MENU_CONNECTION_DISCONNECT, MF_DISABLED);
-		
-		// Program:
-		EnableMenuItem(MainDialog->MainMenu, MENU_PROGRAM_LOAD_AND_RUN, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_PROGRAM_PROGRAM_DEVICE, MF_DISABLED);
-
-		// Device:
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_SERIAL_NUMBER, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_CLEAR_BLUETOOTH, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_ERASE_MEMORY_SLOTS, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_FACTORY_RESET, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_RESET, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_DISABLED);
-		CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_UNCHECKED);
-		CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_UNCHECKED);
-
-		// Device->Emulator Output Protocol
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_AUTO, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_NINTENDOSWITCH, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION3, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION45, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_XBOX360, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_XBOXONE, MF_DISABLED);
-		// Device->Operational Mode
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_TOURNAMENT, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_STANDARD, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_WHEEL, MF_DISABLED);
-		// Device->Remote Slot Change
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_DISABLED, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_LEFTSTICK, MF_DISABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_SELECT, MF_DISABLED);
-		
-		// Disable dialog objects
-		//
-		// Buttons:
-		EnableWindow(MainDialog->ClearBluetoothButton, FALSE);
-		EnableWindow(MainDialog->EraseMemorySlotsButton, FALSE);
-		EnableWindow(MainDialog->FactoryResetButton, FALSE);
-		EnableWindow(MainDialog->ResetButton, FALSE);
-		
-		// Combo boxes:
-		EnableWindow(MainDialog->EmulatorOutputComboBox, FALSE);
-		EnableWindow(MainDialog->OperationalModeComboBox, FALSE);
-		EnableWindow(MainDialog->RemoteSlotChangeComboBox, FALSE);
-
-		// Radio buttons:
-		EnableWindow(MainDialog->PS4SpecialityRadio, FALSE);
-		EnableWindow(MainDialog->RemotePlayRadio, FALSE);
-
-		// Sliders:
-		EnableWindow(MainDialog->DS4LightbarBrightnessSlider, FALSE);
-		EnableWindow(MainDialog->VMSpeedSlider, FALSE);
-
-		// Clear labels
-		SendDlgItemMessageA(MainDialog->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)"");
-		SendDlgItemMessageA(MainDialog->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)"");
-		SendDlgItemMessageA(MainDialog->Handle, LABEL_FIRMWARE_VERSION, WM_SETTEXT, 0, (LPARAM)"");
+		MainDialog->DisableDialog();
+		MainDialog->ClearVisibleSlots();
 		break;
 
 	case Connection_Connecting:
@@ -400,61 +340,7 @@ void Communication::UpdateConnectionState(ConnectionState EventCode)
 
 	case Connection_Connected:
 		MainDialog->UpdateCaption("Connected to device");
-
-		// Enable menus
-		// 
-		// Connection:
-		EnableMenuItem(MainDialog->MainMenu, MENU_CONNECTION_DISCONNECT, MF_ENABLED);
-
-		// Program:
-		EnableMenuItem(MainDialog->MainMenu, MENU_PROGRAM_LOAD_AND_RUN, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_PROGRAM_PROGRAM_DEVICE, MF_ENABLED);
-
-		// Device:
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_SERIAL_NUMBER, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_CLEAR_BLUETOOTH, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_ERASE_MEMORY_SLOTS, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_FACTORY_RESET, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_RESET, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_ENABLED);
-
-		// Device->Emulator Output Protocol
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_AUTO, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_NINTENDOSWITCH, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION3, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION45, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_XBOX360, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_EMULATOR_XBOXONE, MF_ENABLED);
-		// Device->Operational Mode
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_TOURNAMENT, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_STANDARD, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_OPERATIONAL_WHEEL, MF_ENABLED);
-		// Device->Remote Slot Change
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_DISABLED, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_LEFTSTICK, MF_ENABLED);
-		EnableMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTESLOT_SELECT, MF_ENABLED);
-
-		// Enable dialog objects
-		// 
-		// Buttons:
-		EnableWindow(MainDialog->ClearBluetoothButton, TRUE);
-		EnableWindow(MainDialog->EraseMemorySlotsButton, TRUE);
-		EnableWindow(MainDialog->FactoryResetButton, TRUE);
-		EnableWindow(MainDialog->ResetButton, TRUE);
-
-		// Combo boxes:
-		EnableWindow(MainDialog->EmulatorOutputComboBox, TRUE);
-		EnableWindow(MainDialog->OperationalModeComboBox, TRUE);
-		EnableWindow(MainDialog->RemoteSlotChangeComboBox, TRUE);
-
-		// Radio buttons:
-		EnableWindow(MainDialog->PS4SpecialityRadio, TRUE);
-		EnableWindow(MainDialog->RemotePlayRadio, TRUE);
-
-		// Sliders:
-		EnableWindow(MainDialog->DS4LightbarBrightnessSlider, TRUE);
-		EnableWindow(MainDialog->VMSpeedSlider, TRUE);
+		MainDialog->EnableDialog();
 		break;
 
 	case Connection_PS4Speciality:

@@ -17,7 +17,14 @@ public:
 	void Timestamp(void);
 	
 	// Window functions:
+	void ClearVisibleSlots(void);
+	void DisableDialog(void);
+	void EnableDialog(void);
 	void UpdateCaption(const char* Status);
+
+	// Class members:
+	StatusDialogManager* StatusDialog;
+	RunScriptDialogManager* RunScriptDialog;
 
 	// Dialog objects:
 	// 
@@ -29,6 +36,7 @@ public:
 
 	// Buttons:
 	HWND ClearBluetoothButton;
+	HWND CycleSlotsButton;
 	HWND EraseMemorySlotsButton;
 	HWND FactoryResetButton;
 	HWND ResetButton;
@@ -37,6 +45,12 @@ public:
 	HWND EmulatorOutputComboBox;
 	HWND OperationalModeComboBox;
 	HWND RemoteSlotChangeComboBox;
+
+	// Labels:
+	HWND CurrentSlotLabel;
+
+	// List box:
+	HWND ScriptsListBox;
 
 	// Radio buttons:
 	HWND PS4SpecialityRadio;
@@ -77,13 +91,16 @@ private:
 	INT_PTR OnCtlColorListBox(WPARAM wParam, LPARAM lParam);
 	INT_PTR OnHScroll(WPARAM wParam, LPARAM lParam);
 	INT_PTR OnInitDialog(WPARAM wParam, LPARAM lParam);
-	INT_PTR OnLButtonDown(WPARAM wParam, LPARAM lParam);
 	INT_PTR OnNotify(WPARAM wParam, LPARAM lParam);
+	INT_PTR OnLButtonDown(WPARAM wParam, LPARAM lParam);
+	INT_PTR OnRButtonDown(WPARAM wParam, LPARAM lParam);
 	INT_PTR OnShowWindow(WPARAM wParam, LPARAM lParam);
-
 
 	// User functions:
 	void OutputText(COLORREF Color, const char* Text);
+
+	// Miscellaneous variables:
+	unsigned int PopupSlot;
 
 protected:
 	// Callback functions:

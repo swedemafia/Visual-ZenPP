@@ -6,6 +6,8 @@
 #pragma comment (lib, "hid.lib")
 #pragma comment (lib, "cfgmgr32.lib")
 #pragma comment (lib, "setupapi.lib")
+#pragma comment (lib, "Shlwapi.lib")
+#pragma comment (lib, "Comctl32.lib")
 
 #include <list>
 #include <string>
@@ -16,6 +18,7 @@
 #include <SetupAPI.h>
 #include <hidsdi.h>
 #include <Richedit.h>
+#include <Shlwapi.h>
 
 #include "resource.h"
 #include "Crypt.h"
@@ -25,6 +28,8 @@
 #include "CronusZen.h"
 #include "Emulator.h"
 #include "DialogManager.h"
+#include "StatusDialog.h"
+#include "RunScriptDialog.h"
 #include "MainDialog.h"
 #include "AppSettings.h"
 #include "Functions.h"

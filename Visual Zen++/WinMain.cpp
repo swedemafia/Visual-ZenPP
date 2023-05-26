@@ -13,6 +13,11 @@ BOOL WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 {
     LoadLibraryA("RichEd20.dll");
 
+    INITCOMMONCONTROLSEX icex;
+    icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    icex.dwICC = ICC_PROGRESS_CLASS;
+    InitCommonControlsEx(&icex);
+
     MainDialog = new MainDialogManager(hInstance, DLG_MAIN);
 
     if (MainDialog != nullptr) {

@@ -7,18 +7,18 @@ void ChangeDS4LightbarBrightness(unsigned char Value)
 
     if (Connection.State == Communication::Connection_Connected || Connection.State == Communication::Connection_Connecting) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(YELLOW, "DS4 lightbar brightness is now set to %d%%.\t\n", Value);
+        MainDialog->InsertFormattedText(YELLOW, _c("DS4 lightbar brightness is now set to %d%%.\t\n"), Value);
 
         // Set slider value
         SendMessage(MainDialog->DS4LightbarBrightnessSlider, TBM_SETPOS, TRUE, (LPARAM)Value);
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to change your DS4 controller lightbar brightness!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to change your DS4 controller lightbar brightness!\r\n"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to change your DS4 controller lightbar brightness!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to change your DS4 controller lightbar brightness!\r\n"));
     }
 }
 
@@ -83,11 +83,11 @@ void ChangeEmulatorOutputProtocol(MainDialogManager::EmulatorOutputProtocolIDs P
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to change the emulator output protocol!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to change the emulator output protocol!\r\n"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to change the emulator output protocol!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to change the emulator output protocol!\r\n"));
     }
 }
 
@@ -132,11 +132,11 @@ void ChangeOperationalMode(MainDialogManager::OperationalModeIDs Mode)
     }
     else if(Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to change the operational mode!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to change the operational mode!\r\n"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to change the operational mode!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to change the operational mode!\r\n"));
     }
 }
 
@@ -169,11 +169,11 @@ void ChangePS4Speciality(unsigned char Value)
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to %s PS4 Speciality!\r\n", (Value == 1) ? _c("enable") : _c("disable"));
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to %s PS4 Speciality!\r\n"), (Value == 1) ? _c("enable") : _c("disable"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to %s PS4 Speciality!\r\n", (Value == 1) ? _c("enable") : _c("disable"));
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to %s PS4 Speciality!\r\n"), (Value == 1) ? _c("enable") : _c("disable"));
     }
 }
 
@@ -206,11 +206,11 @@ void ChangeRemotePlay(unsigned char Value)
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to %s Remote Play!\r\n", (Value == 1) ? _c("enable") : _c("disable"));
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to %s Remote Play!\r\n"), (Value == 1) ? _c("enable") : _c("disable"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to %s Remote Play!\r\n", (Value == 1) ? _c("enable") : _c("disable"));
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to %s Remote Play!\r\n"), (Value == 1) ? _c("enable") : _c("disable"));
     }
 }
 
@@ -254,11 +254,11 @@ void ChangeRemoteSlotChange(MainDialogManager::RemoteSlotChangeIDs Type)
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to change the remote slot change type!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to change the remote slot change type!\r\n"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to change the remote slot change type!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to change the remote slot change type!\r\n"));
     }
 }
 
@@ -269,18 +269,18 @@ void ChangeVMSpeedValue(unsigned char Value)
 
     if (Connection.State == Communication::Connection_Connected || Connection.State == Communication::Connection_Connecting) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(YELLOW, "Virtual machine (VM) speed is now %dms.\r\n", Value);
+        MainDialog->InsertFormattedText(YELLOW, _c("Virtual machine (VM) speed is now %dms.\r\n"), Value);
 
         // Set slider value
         SendMessage(MainDialog->VMSpeedSlider, TBM_SETPOS, TRUE, (LPARAM)Value);
     }
     else if (Connection.State == Communication::Connection_Disconnected) {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must be connected to a compatible device before attempting to change the virtual machine speed!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must be connected to a compatible device before attempting to change the virtual machine speed!\r\n"));
     }
     else {
         MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(RED, "You must wait for the current operation to complete before attempting to change virtual machine speed!\r\n");
+        MainDialog->InsertFormattedText(RED, _c("You must wait for the current operation to complete before attempting to change virtual machine speed!\r\n"));
     }
 }
 

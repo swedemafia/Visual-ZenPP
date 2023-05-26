@@ -1,5 +1,141 @@
 #include "pch.h"
 
+void MainDialogManager::ClearVisibleSlots(void)
+{
+    for (unsigned i = 0; i < 8; i++)
+        SendDlgItemMessageA(this->Handle, LABEL_SLOT_1 + i, WM_SETTEXT, 0, (LPARAM)"");
+}
+
+void MainDialogManager::DisableDialog(void)
+{
+    // Clear window text
+    SetWindowTextA(this->CurrentSlotLabel, "");
+
+    // Disable menus
+    // 
+    // Connection:
+    EnableMenuItem(this->MainMenu, MENU_CONNECTION_DISCONNECT, MF_DISABLED);
+
+    // Program:
+    EnableMenuItem(this->MainMenu, MENU_PROGRAM_LOAD_AND_RUN, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_PROGRAM_PROGRAM_DEVICE, MF_DISABLED);
+
+    // Device:
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_SERIAL_NUMBER, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_CLEAR_BLUETOOTH, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_CYCLE_SLOTS, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_ERASE_MEMORY_SLOTS, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_FACTORY_RESET, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_RESET, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_DISABLED);
+    CheckMenuItem(this->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_UNCHECKED);
+    CheckMenuItem(this->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_UNCHECKED);
+
+    // Device->Emulator Output Protocol
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_AUTO, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_NINTENDOSWITCH, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION3, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION45, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_XBOX360, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_XBOXONE, MF_DISABLED);
+    // Device->Operational Mode
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_TOURNAMENT, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_STANDARD, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_WHEEL, MF_DISABLED);
+    // Device->Remote Slot Change
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_DISABLED, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_LEFTSTICK, MF_DISABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_SELECT, MF_DISABLED);
+
+    // Disable dialog objects
+    //
+    // Buttons:
+    EnableWindow(this->ClearBluetoothButton, FALSE);
+    EnableWindow(this->CycleSlotsButton, FALSE);
+    EnableWindow(this->EraseMemorySlotsButton, FALSE);
+    EnableWindow(this->FactoryResetButton, FALSE);
+    EnableWindow(this->ResetButton, FALSE);
+
+    // Combo boxes:
+    EnableWindow(this->EmulatorOutputComboBox, FALSE);
+    EnableWindow(this->OperationalModeComboBox, FALSE);
+    EnableWindow(this->RemoteSlotChangeComboBox, FALSE);
+
+    // Radio buttons:
+    EnableWindow(this->PS4SpecialityRadio, FALSE);
+    EnableWindow(this->RemotePlayRadio, FALSE);
+
+    // Sliders:
+    EnableWindow(this->DS4LightbarBrightnessSlider, FALSE);
+    EnableWindow(this->VMSpeedSlider, FALSE);
+
+    // Clear labels
+    SendDlgItemMessageA(this->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)"");
+    SendDlgItemMessageA(this->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)"");
+    SendDlgItemMessageA(this->Handle, LABEL_FIRMWARE_VERSION, WM_SETTEXT, 0, (LPARAM)"");
+}
+
+void MainDialogManager::EnableDialog(void)
+{
+    // Enable menus
+    // 
+    // Connection:
+    EnableMenuItem(this->MainMenu, MENU_CONNECTION_DISCONNECT, MF_ENABLED);
+
+    // Program:
+    EnableMenuItem(this->MainMenu, MENU_PROGRAM_LOAD_AND_RUN, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_PROGRAM_PROGRAM_DEVICE, MF_ENABLED);
+
+    // Device:
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_SERIAL_NUMBER, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_CLEAR_BLUETOOTH, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_CYCLE_SLOTS, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_ERASE_MEMORY_SLOTS, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_FACTORY_RESET, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_RESET, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_ENABLED);
+
+    // Device->Emulator Output Protocol
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_AUTO, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_NINTENDOSWITCH, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION3, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_PLAYSTATION45, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_XBOX360, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_EMULATOR_XBOXONE, MF_ENABLED);
+    // Device->Operational Mode
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_TOURNAMENT, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_STANDARD, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_OPERATIONAL_WHEEL, MF_ENABLED);
+    // Device->Remote Slot Change
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_DISABLED, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_LEFTSTICK, MF_ENABLED);
+    EnableMenuItem(this->MainMenu, MENU_DEVICE_REMOTESLOT_SELECT, MF_ENABLED);
+
+    // Enable dialog objects
+    // 
+    // Buttons:
+    EnableWindow(this->ClearBluetoothButton, TRUE);
+    EnableWindow(this->CycleSlotsButton, TRUE);
+    EnableWindow(this->EraseMemorySlotsButton, TRUE);
+    EnableWindow(this->FactoryResetButton, TRUE);
+    EnableWindow(this->ResetButton, TRUE);
+
+    // Combo boxes:
+    EnableWindow(this->EmulatorOutputComboBox, TRUE);
+    EnableWindow(this->OperationalModeComboBox, TRUE);
+    EnableWindow(this->RemoteSlotChangeComboBox, TRUE);
+
+    // Radio buttons:
+    EnableWindow(this->PS4SpecialityRadio, TRUE);
+    EnableWindow(this->RemotePlayRadio, TRUE);
+
+    // Sliders:
+    EnableWindow(this->DS4LightbarBrightnessSlider, TRUE);
+    EnableWindow(this->VMSpeedSlider, TRUE);
+}
+
 INT_PTR CALLBACK MainDialogManager::HandleMessage(UINT Message, WPARAM wParam, LPARAM lParam)
 {
     switch (Message) {
@@ -20,9 +156,90 @@ INT_PTR CALLBACK MainDialogManager::HandleMessage(UINT Message, WPARAM wParam, L
         return OnNotify(wParam, lParam);
     case WM_SHOWWINDOW:
         return OnShowWindow(wParam, lParam);
+    case WM_LBUTTONDOWN:
+        return OnLButtonDown(wParam, lParam);
+    case WM_RBUTTONDOWN:
+        return OnRButtonDown(wParam, lParam);
     }
 
 	return FALSE; // Default message processing
+}
+
+INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    if (Connection.State == Communication::Connection_Connected) {
+        int x = LOWORD(lParam);
+        int y = HIWORD(lParam);
+        RECT rect;
+
+        // Loop through each of the slots (labels)
+        for (unsigned i = 0; i < 8; i++) {
+
+            HWND SlotToCheck = GetDlgItem(this->Handle, LABEL_SLOT_1 + i);
+
+            // Convert coordinates
+            GetWindowRect(SlotToCheck, &rect);
+            MapWindowPoints(NULL, this->Handle, reinterpret_cast<POINT*>(&rect), 2);
+
+            if (PtInRect(&rect, { x, y })) {
+
+                OPENFILENAMEA OpenFileName = { 0 };
+                char ChosenFile[MAX_PATH] = "";
+
+                // Open dialog only for *.bin files
+                OpenFileName.lStructSize = sizeof(OPENFILENAMEA);
+                OpenFileName.hwndOwner = this->Handle;
+                OpenFileName.lpstrFile = ChosenFile;
+                OpenFileName.nMaxFile = sizeof(ChosenFile);
+                OpenFileName.lpstrFilter = _c("Compiled Scripts (*.bin)\0*.bin\0");
+                OpenFileName.nFilterIndex = 1;
+                OpenFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
+
+                // Open the dialog and set the label if the user selects a file
+                if (GetOpenFileNameA(&OpenFileName) == TRUE) {
+
+                    // Copy file path and file name
+                    memcpy(&Cronus.Slot[i].FilePath, OpenFileName.lpstrFile, sizeof(Cronus.Slot[i].FilePath));
+                    memcpy(&Cronus.Slot[i].FileName, PathFindFileNameA(OpenFileName.lpstrFile), sizeof(Cronus.Slot[i].FileName));
+                    
+                    // Attempt to open file
+                    HANDLE FileHandle = CreateFileA((LPCSTR)Cronus.Slot[i].FilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+                    
+                    // Determine if file was able to be read
+                    if (FileHandle == INVALID_HANDLE_VALUE) {
+                        Timestamp();
+                        InsertFormattedText(RED, _c("Error loading file %s!\r\n"), Cronus.Slot[i].FileName);
+                    }
+                    else {
+
+                        // Obtain file size
+                        Cronus.Slot[i].FileSize = GetFileSize(FileHandle, NULL);
+
+                        if (Cronus.Slot[i].FileSize == INVALID_FILE_SIZE) {
+
+                            // Prompt user of error querying file size
+                            Timestamp();
+                            InsertFormattedText(RED, _c("Error loading file %s, unable to query file size!\r\n"), Cronus.Slot[i].FileName);
+
+                            // Clear slot
+                            memset(&Cronus.Slot[i], 0, sizeof(Cronus.Slot[i]));
+                        }
+                        else {
+                            SetWindowTextA(SlotToCheck, (LPCSTR)Cronus.Slot[i].FileName);
+                        }
+
+                        // Close file
+                        CloseHandle(FileHandle);
+                    }
+                }
+
+                return TRUE;
+            }
+
+        }
+    }
+
+    return FALSE;
 }
 
 INT_PTR MainDialogManager::OnClose(WPARAM wParam, LPARAM lParam)
@@ -37,6 +254,55 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     // Determine which dialog object was clicked
     switch (LOWORD(wParam)) {
+    // About
+    case MENU_ABOUT_ABOUT:
+        Timestamp();
+        InsertFormattedText(LIGHTBLUE, _c("Zen++ - Copyright (C) 2023 Swedemafia - version %d.%02d.\r\n"), VERSION_MAJOR, VERSION_MINOR);
+        Timestamp();
+        InsertFormattedText(PURPLE, _c("This program is not affiliated with or an official product of Cronus and/or Collective Minds Gaming Co. Ltd.\r\n"));
+        Timestamp();
+        InsertFormattedText(LIGHTBLUE, _c("Zen++ was developed to protect developers within the community.\r\n"));
+
+        // Enable URL detection
+        SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, TRUE, 0);
+
+        Timestamp();
+        InsertFormattedText(LIGHTBLUE, _c("For support, join the Discord: https://discord.gg/tGH7QxtPam.\r\n"));
+
+        // Disable URL detection
+        SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, FALSE, 0);
+
+        break;
+
+    // Support
+    case MENU_ABOUT_SUPPORT:
+
+        // Enable URL detection
+        SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, TRUE, 0);
+
+        // Prompt user
+        Timestamp();
+        InsertFormattedText(GRAY, _c("For support, join the Discord: https://discord.gg/tGH7QxtPam.\r\n"));
+
+        // Disable URL detection
+        SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, FALSE, 0);
+
+        break;
+    // Remove popup
+    case MENU_REMOVE:
+        char Buffer[128];
+
+        // Initialize buffer
+        memset(&Buffer, 0, sizeof(Buffer));
+        wsprintfA(Buffer, _c("Are you sure you want to remove %s from slot #%d?"), Cronus.Slot[PopupSlot].FileName, PopupSlot + 1);
+
+        // Verify user wants to remove script
+        if (MessageBoxA(this->Handle, Buffer, _c("Remove from Slot?"), MB_YESNO | MB_ICONQUESTION) == IDYES) {
+            memset(&Cronus.Slot[PopupSlot], 0, sizeof(Cronus.Slot[PopupSlot]));
+            SetWindowTextA(GetDlgItem(this->Handle, LABEL_SLOT_1 + PopupSlot), _c(""));
+        }
+
+        break;
 
     case COMBO_EMULATOR_OUTPUT_PROTOCOL:
         if ((HIWORD(wParam) == CBN_SELCHANGE)) {
@@ -247,11 +513,61 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
         break;
 
+    // Cycle slots:
+    case MENU_DEVICE_CYCLE_SLOTS:
+    case BUTTON_CYCLE_SLOTS:
+
+        if (Connection.State == Communication::Connection_Connected) {
+
+            // May only proceed if a completion thread is not running
+            if (Cronus.Thread == INVALID_HANDLE_VALUE) {
+
+                unsigned char NumberOfSlots;
+
+                NumberOfSlots = 0;
+
+                for (unsigned i = 0; i < 8; i++)
+                    if (Cronus.Slot[i].FileSize)
+                        NumberOfSlots++;
+
+                if (NumberOfSlots) {
+                    // Notify user
+                    Timestamp();
+                    InsertFormattedText(GRAY, _c("Attempting to cycle slots...\r\n"));
+
+                    // Update connection status
+                    Communication::UpdateConnectionState(Communication::Connection_CycleSlot);
+
+                    // Perform cycle sequence
+                    CronusZen::StreamIoStatus(CronusZen::Off);
+                    CronusZen::ChangeSlotA();
+                    CronusZen::StreamIoStatus(CronusZen::Off);
+                    CronusZen::ChangeSlotB();
+                    CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport | CronusZen::Ps5Adt);
+                }
+                else {
+                    Timestamp();
+                    InsertFormattedText(RED, _c("There are no slots to cycle!\r\n"));
+                }
+            }
+            else {
+                Timestamp();
+                InsertFormattedText(RED, _c("You must wait for the operation to complete prior to attempting to cycle to the next GPC!\r\n"));
+            }
+
+        }
+        else {
+            Timestamp();
+            InsertFormattedText(RED, _c("You must connect to the device before attempting to cycle to the next GPC!\r\n"));
+        }
+
+        break;
+
     // Serial number:
     case MENU_DEVICE_SERIAL_NUMBER:
         // Notify user of serial number
-        MainDialog->Timestamp();
-        MainDialog->InsertFormattedText(GRAY, _c("Device serial number: %s.\r\n"), Cronus.SerialNumber);
+        this->Timestamp();
+        this->InsertFormattedText(GRAY, _c("Device serial number: %s.\r\n"), Cronus.SerialNumber);
         break;
 
     // PS4 Speciality:
@@ -272,8 +588,8 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 if (Connection.State != Communication::Connection_RemotePlay) {
                     if (Connection.State != Communication::Connection_PS4Speciality) {
                         Cronus.Ps4Speciality = 1;
-                        CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_UNCHECKED);
-                        CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_CHECKED);
+                        CheckMenuItem(this->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_UNCHECKED);
+                        CheckMenuItem(this->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_CHECKED);
                         ChangePS4Speciality(1);
                     }
                     else {
@@ -307,8 +623,8 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 if (Connection.State != Communication::Connection_PS4Speciality) {
                     if (Connection.State != Communication::Connection_RemotePlay) {
                         Cronus.RemotePlay = 1;
-                        CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_CHECKED);
-                        CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_UNCHECKED);
+                        CheckMenuItem(this->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_CHECKED);
+                        CheckMenuItem(this->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_UNCHECKED);
                         ChangeRemotePlay(1);
                     }
                     else {
@@ -321,6 +637,117 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
             }
 
         }
+        break;
+
+    // Load and run
+    case MENU_PROGRAM_LOAD_AND_RUN:
+
+        OPENFILENAMEA OpenFileName;
+        char ChosenFile[MAX_PATH];
+
+        memset(&ChosenFile, 0, sizeof(ChosenFile));
+        memset(&OpenFileName, 0, sizeof(OPENFILENAMEA));
+
+        // Open dialog only for *.bin files
+        OpenFileName.lStructSize = sizeof(OPENFILENAMEA);
+        OpenFileName.hwndOwner = this->Handle;
+        OpenFileName.lpstrFile = ChosenFile;
+        OpenFileName.nMaxFile = sizeof(ChosenFile);
+        OpenFileName.lpstrFilter = _c("Compiled Scripts (*.bin)\0*.bin\0");
+        OpenFileName.nFilterIndex = 1;
+        OpenFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
+
+        // Open the dialog and set the label if the user selects a file
+        if (GetOpenFileNameA(&OpenFileName) == TRUE) {
+
+            PathFindFileNameA(OpenFileName.lpstrFile);
+
+            if (Connection.State == Communication::Connection_Connected)
+            {
+                if (Cronus.Thread == INVALID_HANDLE_VALUE) {
+
+                    // Find the position of the last backslash character
+                    memcpy(Cronus.Slot[9].FileName, PathFindFileNameA(OpenFileName.lpstrFile), 64);
+
+                    // Notify user
+                    Timestamp();
+                    InsertFormattedText(GRAY, _c("Attempting to run script %s...\r\n"), Cronus.Slot[9].FileName);
+
+                    // Create factory reset thread
+                    Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_RunScript, 0, NULL);
+
+                    // Check for success
+                    if (Cronus.Thread == INVALID_HANDLE_VALUE) {
+                        Timestamp();
+                        InsertFormattedText(RED, _c("Failed to initiate run script thread (error: %d)!\r\n"), GetLastError());
+                    }
+
+                }
+                else {
+                    Timestamp();
+                    InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to run a script!\r\n"));
+                }
+
+            }
+            else {
+                Timestamp();
+                InsertFormattedText(RED, _c("You must connect to the device before attempting to run a script!\r\n"));
+            }
+        }
+        else {
+            Timestamp();
+            InsertFormattedText(RED, _c("Failed to open, load and run %s!\r\n"), PathFindFileNameA(OpenFileName.lpstrFile));
+        }
+
+
+        break;
+
+    // Program device
+    case MENU_PROGRAM_PROGRAM_DEVICE:
+        if (Connection.State == Communication::Connection_Connected) {
+
+            for (auto i = 0; i < 8; i++)
+                if (strlen((const char*)Cronus.Slot[i].FileName))
+                    Cronus.NumberOfPendingSlots++;
+
+            // Validate that there are slots pending to write
+            if (Cronus.NumberOfPendingSlots) {
+
+                // Consolidate the slots
+                for (auto i = 0, j = 1; j < 8; j++) {
+                    if (!strlen((const char*)Cronus.Slot[i].FileName)) {
+                        if (strlen((const char*)Cronus.Slot[j].FileName)) {
+                            memcpy(Cronus.Slot[i].FileName, Cronus.Slot[j].FileName, strlen((const char*)Cronus.Slot[j].FileName));
+                            memset(Cronus.Slot[j].FileName, 0, sizeof(Cronus.Slot[j].FileName));
+                            i++;
+                        }
+                    }
+                    else {
+                        i++;
+                    }
+                }
+
+                // Create factory reset thread
+                Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_FlashConfig, 0, NULL);
+
+                // Check for success
+                if (Cronus.Thread == INVALID_HANDLE_VALUE) {
+                    Timestamp();
+                    InsertFormattedText(RED, _c("Failed to initiate flash config thread (error: %d)!\r\n"), GetLastError());
+                }
+
+            }
+            else {
+                Timestamp();
+                InsertFormattedText(RED, _c("You must set some slots to load scripts before attempting to program the slots!\r\n"));
+            }
+
+        }
+        else {
+            Timestamp();
+            InsertFormattedText(RED, _c("You must connect to the device before attempting to program the slots!\r\n"));
+        }
+
         break;
 
     // Disconnect:
@@ -354,6 +781,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
     return TRUE;
 }
 
+
 INT_PTR MainDialogManager::OnCtlColorDlg(WPARAM wParam, LPARAM lParam)
 {
     HDC hdc = (HDC)wParam;
@@ -384,7 +812,7 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
 
             // Display the slider value (optional)
             char FormattedValue[8];
-            sprintf_s(FormattedValue, "%d%%", SliderValue);
+            sprintf_s(FormattedValue, _c("%d%%"), SliderValue);
             SendDlgItemMessageA(this->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)FormattedValue);
 
             // Submit update if we are connected
@@ -402,7 +830,7 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
 
             // Display the slider value (optional)
             char FormattedValue[8];
-            sprintf_s(FormattedValue, "%dms", SliderValue);
+            sprintf_s(FormattedValue, _c("%dms"), SliderValue);
             SendDlgItemMessageA(this->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)FormattedValue);
 
             // Submit update if we are connected
@@ -440,6 +868,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 
     // Buttons:
     this->ClearBluetoothButton = GetDlgItem(this->Handle, BUTTON_CLEAR_BLUETOOTH);
+    this->CycleSlotsButton = GetDlgItem(this->Handle, BUTTON_CYCLE_SLOTS);
     this->EraseMemorySlotsButton = GetDlgItem(this->Handle, BUTTON_ERASE_MEMORY_SLOTS);
     this->FactoryResetButton = GetDlgItem(this->Handle, BUTTON_FACTORY_RESET);
     this->ResetButton = GetDlgItem(this->Handle, BUTTON_RESET_DEVICE);
@@ -451,6 +880,12 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 
     // Menu:
     this->MainMenu = GetMenu(this->Handle);
+    
+    // Labels:
+    this->CurrentSlotLabel = GetDlgItem(this->Handle, LABEL_CURRENT_SLOT);
+
+    // Listbox:
+    this->ScriptsListBox = GetDlgItem(this->Handle, LISTBOX_SCRIPTS);
 
     // Radio buttons:
     this->PS4SpecialityRadio = GetDlgItem(this->Handle, RADIO_PS4_SPECIALITY);
@@ -538,38 +973,40 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     // Device:
     Device.State = Emulator::Device_Init;
 
+    // Populate file list
+    char CurrentDirectory[MAX_PATH] = "";
+    
+    if (GetCurrentDirectoryA(MAX_PATH, CurrentDirectory)) {
+
+        // Format directory with type of files we are looking for
+        wsprintfA(CurrentDirectory, _c("%s\\*.bin"), CurrentDirectory);
+
+        WIN32_FIND_DATAA FindData;
+        HANDLE FindFile = FindFirstFileA(CurrentDirectory, &FindData);
+
+        // Loop through each file and add it to the listbox
+        if (FindFile != INVALID_HANDLE_VALUE) {
+            do {
+                if (!(FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                    SendMessageA(this->ScriptsListBox, LB_ADDSTRING, 0, (LPARAM)FindData.cFileName);
+            } while (FindNextFileA(FindFile, &FindData));
+        }
+    }
+    else {
+        Timestamp();
+        InsertFormattedText(RED, _c("Failed to query list of files in the current directory!\r\n"));
+    }
+
+    StatusDialog = new StatusDialogManager(this->Instance, DLG_STATUS);
+    StatusDialog->MakeDialog();
+
+    RunScriptDialog = new RunScriptDialogManager(this->Instance, DLG_RUNSCRIPT);
+    RunScriptDialog->MakeDialog();
+
+    // Create SlotConfig directory
+    CreateDirectoryA("SlotConfig", NULL);
+
 	return TRUE;
-}
-
-INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
-{
-    // PS4 Speciality:
-    if ((HWND)wParam == this->PS4SpecialityRadio) {
-
-        if (HIWORD(wParam) == BN_CLICKED) {
-
-            // Get if PS4 Speciality is already enabled
-            LRESULT IsSelected = SendMessage(this->PS4SpecialityRadio, BM_GETCHECK, 0, 0);
-
-            // Unselect it
-            if (IsSelected)
-                SendMessage(this->PS4SpecialityRadio, BM_SETCHECK, BST_UNCHECKED, 0);
-        }
-    }
-    else if ((HWND)wParam == this->RemotePlayRadio) {
-
-        if (HIWORD(wParam) == BN_CLICKED) {
-
-            // Get if Remote Play is already enabled
-            LRESULT IsSelected = SendMessage(this->RemotePlayRadio, BM_GETCHECK, 0, 0);
-
-            // Unselect it
-            if (IsSelected)
-                SendMessage(this->RemotePlayRadio, BM_SETCHECK, BST_UNCHECKED, 0);
-        }
-    }
-
-    return TRUE;
 }
 
 INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
@@ -582,7 +1019,18 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
         ENLINK* pEnLink;
         pEnLink = (ENLINK*)lParam;
         if (pEnLink->msg == WM_LBUTTONUP) {
-            InsertFormattedText(RED, "user clicked link!\r\n");
+
+            TCHAR LinkClicked[64];
+            TEXTRANGE tr;
+
+            tr.chrg = pEnLink->chrg;
+            tr.lpstrText = LinkClicked;
+
+            // Get the actual link
+            SendMessage(pnmhdr->hwndFrom, EM_GETTEXTRANGE, 0, (LPARAM)&tr);
+
+            // Open it
+            ShellExecute(this->Handle, _cw(L"open"), LinkClicked, NULL, NULL, SW_SHOWNORMAL);
         }
         break;
 
@@ -594,7 +1042,7 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
 
             // Build display buffer
             char Display[8] = "";
-            sprintf_s(Display, "%d%%", SliderValue);
+            sprintf_s(Display, _c("%d%%"), SliderValue);
 
             // Set label text
             SendDlgItemMessageA(this->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)Display);
@@ -607,12 +1055,54 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
 
             // Build display buffer
             char Display[8] = "";
-            sprintf_s(Display, "%dms", SliderValue);
+            sprintf_s(Display, _c("%dms"), SliderValue);
 
             // Set label text
             SendDlgItemMessageA(this->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)Display);
         }
         break;
+
+    }
+
+    return TRUE;
+}
+
+INT_PTR MainDialogManager::OnRButtonDown(WPARAM wParam, LPARAM lParam)
+{
+    int x = LOWORD(lParam);
+    int y = HIWORD(lParam);
+    RECT rect;
+
+    // Loop through each of the slots (labels)
+    for (unsigned i = 0; i < 8; i++) {
+
+        HWND SlotToCheck = GetDlgItem(this->Handle, LABEL_SLOT_1 + i);
+
+        // Convert coordinates
+        GetWindowRect(SlotToCheck, &rect);
+        MapWindowPoints(NULL, this->Handle, reinterpret_cast<POINT*>(&rect), 2);
+
+        if (PtInRect(&rect, { x, y })) {
+
+            if (Cronus.Slot[i].FileSize) {
+
+                POINT CursorPosition;
+                HMENU PopupMenu = LoadMenu(this->Instance, MAKEINTRESOURCE(MENU_POPUP_REMOVE));
+
+                // Get cursor position
+                GetCursorPos(&CursorPosition);
+
+                // Display the popup menu
+                TrackPopupMenu(GetSubMenu(LoadMenu(this->Instance, MAKEINTRESOURCE(MENU_POPUP_REMOVE)), 0), TPM_LEFTALIGN | TPM_TOPALIGN, CursorPosition.x, CursorPosition.y, 0, this->Handle, NULL);
+
+                // Destroy the menu
+                DestroyMenu(PopupMenu);
+
+                this->PopupSlot = i;
+            }
+
+            break;
+        }
 
     }
 

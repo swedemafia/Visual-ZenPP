@@ -236,10 +236,9 @@ namespace CronusZen
 
 	// Structures:
 	struct SlotConfig {
-		BYTE FileName[64];
+		BYTE FilePath[MAX_PATH];
+		BYTE FileName[MAX_PATH];
 		DWORD FileSize;
-		BOOLEAN WriteConfig;
-		BOOLEAN WriteGamepack;
 	};
 
 	struct InputReportInformation {
@@ -281,12 +280,14 @@ namespace CronusZen
 	struct CronusZenInformation {
 		BYTE Checksum[4];
 		BYTE CurrentSlot;
+		BYTE ReadByteCode[8];
 		BYTE* FirmwareVersion;
 		BYTE* SerialNumber;
 
 		unsigned char NumberOfErrorSlots;
 		unsigned char NumberOfPendingSlots;
 		unsigned char SlotToWrite;
+		unsigned char SlotToRead;
 		unsigned char VMSpeedValue;
 
 		CommunicationVersion CommunicationVersion;
@@ -326,6 +327,7 @@ namespace CronusZen
 	// User functions:
 	BOOL CheckBitmask(BYTE Value, BYTE ShiftBits);
 	void DisplaySlotsCfg(void);
+	void ReadByteCodes(void);
 	void WriteFlashConfig(void);
 
 	// Recv:
@@ -340,6 +342,7 @@ namespace CronusZen
 	void OnGetSerial(void);
 	void OnFragmentRead(void);
 	void OnReadSlotsCfg(void);
+	void OnReadByteCode(void);
 
 	// Send:
 	void RunScript(const char* Script);
@@ -367,6 +370,7 @@ namespace CronusZen
 	void FragmentRead(void);
 	void ReadSlotsCfg(void);
 	void SetVmCtrl(unsigned int Speed);
+	void ReadByteCode(unsigned char Slot);
 }
 
 #endif
