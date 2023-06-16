@@ -361,3 +361,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Visual Zen++/empathy_223.bin
+/Visual Zen++/ascension.bin
+*.zpl
+/Visual Zen++/SlotConfig/0.dat
+/Visual Zen++/SlotConfig/1.dat
+/Visual Zen++/SlotConfig/2.dat
+/Visual Zen++/SlotConfig/3.dat
+/Visual Zen++/SlotConfig/4.dat
+/Visual Zen++/SlotConfig/5.dat
+/Visual Zen++/SlotConfig/6.dat
+/Visual Zen++/SlotConfig/7.dat
