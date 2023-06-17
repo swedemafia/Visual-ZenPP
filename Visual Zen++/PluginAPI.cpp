@@ -18,8 +18,7 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 		// Prepare plugin information
 		Plugin.Information.Size = sizeof(PluginInformation);
 
-		// Set API addresses
-
+		// Set API addresses:
 		// UI:
 		Plugin.Information.WriteOutputTimestamp = Emulator::WriteOutputTimestamp;
 		Plugin.Information.WriteOutputString = Emulator::WriteFormattedOutput;

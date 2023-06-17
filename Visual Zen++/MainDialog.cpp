@@ -1043,6 +1043,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     // Create SlotConfig directory
     CreateDirectoryA("SlotConfig", NULL);
 
+    // Set window caption
     SetWindowTextA(this->Handle, _c("Zen++ - Copyright (C) 2023 - Swedemafia"));
 
 	return TRUE;

@@ -64,33 +64,6 @@ void StatusDialogManager::UpdateProgress(float BytesWritten)
 	float SlotPercentage = (this->SlotBytesWritten / this->TotalSlotBytes) * 100;
 	float TotalPercentage = (this->TotalBytesWritten / this->TotalBytes) * 100;
 
-	/*char Buffer[128] = "";
-
-	if (LastSlotPercentage != (unsigned int)SlotPercentage) {
-		// Calculate slot percentage label
-		sprintf_s(Buffer, "%d%%", (unsigned int)SlotPercentage);
-		SendMessageA(this->SlotPercentageLabel, WM_SETTEXT, 0, (LPARAM)Buffer);
-
-		LastSlotPercentage = (unsigned int)SlotPercentage;
-	}
-
-	if (LastTotalPercentage != (unsigned int)TotalPercentage) {
-		// Calculate total percentage label
-		sprintf_s(Buffer, "%d%%", (unsigned int)TotalPercentage);
-		SendMessageA(this->TotalPercentageLabel, WM_SETTEXT, 0, (LPARAM)Buffer);
-
-		LastSlotPercentage = (unsigned int)TotalPercentage;
-	}*/
-
-	// Generate slot status label
-	/*sprintf_s(Buffer, "Uploaded %.0f of %.0f bytes...", this->SlotBytesWritten, this->TotalSlotBytes);
-	SetWindowTextA(this->SlotProgressLabel, Buffer);
-
-	// Generate total status label
-	sprintf_s(Buffer, "Uploaded %.0f of %.0f bytes...", this->TotalBytesWritten, this->TotalBytes);
-	SetWindowTextA(this->TotalProgressLabel, Buffer);
-	*/
-
 	// Set progress bar positions
 	SendMessage(this->CurrentSlotProgress, PBM_SETPOS, (WPARAM)SlotPercentage, 0);
 	SendMessage(this->TotalProgress, PBM_SETPOS, (WPARAM)TotalPercentage, 0);
