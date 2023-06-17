@@ -42,17 +42,6 @@ namespace DialogManager
 		}
 
 	protected:
-
-		// Individual message handlers:
-		/*virtual INT_PTR OnClose(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnCommand(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnCtlColorDlg(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnCtlColorListBox(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnHScroll(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnInitDialog(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnNotify(WPARAM wParam, LPARAM lParam) = 0;
-		virtual INT_PTR OnShowWindow(WPARAM wParam, LPARAM lParam) = 0;*/
-
 		// Message handler:
 		virtual INT_PTR CALLBACK HandleMessage(UINT WindowMessage, WPARAM wParam, LPARAM lParam) = 0;
 		

@@ -6,8 +6,9 @@
 #define MENU_MAIN                       102
 #define DLG_STATUS                      105
 #define DLG_RUNSCRIPT                   106
-#define IDR_MENU1                       107
 #define MENU_POPUP_REMOVE               107
+#define ICO_IOCN                        116
+#define ICO_ICON                        116
 #define RICHEDIT_OUTPUT                 1001
 #define LISTBOX_SCRIPTS                 1002
 #define BUTTON_CLEAR_BLUETOOTH          1003
@@ -48,9 +49,7 @@
 #define PROGRESS_TOTAL                  1052
 #define LABEL_STATUS_SLOT               1053
 #define LABEL_STATUS_TOTAL              1054
-#define LABEL_PROGRESS_SLOT             1055
 #define LABEL_PROGRESS_TOTAL            1056
-#define LABEL_PERCENTAGE_SLOT           1057
 #define LABEL_PERCENTAGE_TOTAL          1059
 #define MENU_FILE_CLEAR_OUTPUT          40000
 #define MENU_FILE_EXIT                  40001
@@ -87,13 +86,20 @@
 #define ID_REMOVE                       40067
 #define ID_REMOVE_REMOVE                40068
 #define MENU_REMOVE                     40069
+#define MENU_PLUGINS_LOAD_PLUGIN        40070
+#define ID_PLUGINS_UNLOADPLUGIN         40071
+#define MENU_PLUGINS_UNLOAD_PLUGIN      40072
+#define ID_PLUGINS_UNLOADPLUGIN40073    40073
+#define ID_PLUGINS_UNLOADPLUGIN40074    40074
+#define ID_PLUGINS_UNLOADPLUGIN40075    40075
+#define ID_PLUGINS_UNLOADPLUGIN40076    40076
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        109
-#define _APS_NEXT_COMMAND_VALUE         40070
+#define _APS_NEXT_RESOURCE_VALUE        117
+#define _APS_NEXT_COMMAND_VALUE         40077
 #define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

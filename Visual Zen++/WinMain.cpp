@@ -2,6 +2,7 @@
 
 // Global classes
 MainDialogManager* MainDialog = nullptr;
+PluginAPI::LoadedPlugin Plugin;
 
 // Global structures
 Communication::ConnectionInformation Connection;

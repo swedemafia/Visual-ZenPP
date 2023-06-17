@@ -21,6 +21,7 @@ public:
 	void DisableDialog(void);
 	void EnableDialog(void);
 	void UpdateCaption(const char* Status);
+	void UpdatePluginMenu(void);
 
 	// Class members:
 	StatusDialogManager* StatusDialog;
@@ -30,6 +31,8 @@ public:
 	// 
 	// Menu:
 	HMENU MainMenu;
+	HMENU UnloadPluginMenu;
+	HMENU PluginMenuSeparator;
 
 	// RichEdit:
 	HWND RichEditOutput;

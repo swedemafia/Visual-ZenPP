@@ -1,19 +1,26 @@
 #include "pch.h"
 
-void StatusDialogManager::HideWindow(void)
-{
-	ShowWindow(this->Handle, SW_HIDE);
-}
-
 void StatusDialogManager::DisplayWindow(void)
 {
 	ShowWindow(this->Handle, SW_SHOW);
 	SetWindowPos(this->Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	SetForegroundWindow(this->Handle);
+	this->IsShowing = TRUE;
 
 	// Set progress bar colors
 	SendMessage(this->CurrentSlotProgress, PBM_SETBARCOLOR, 0, BLUEGREEN);
 	SendMessage(this->TotalProgress, PBM_SETBARCOLOR, 0, BLUEGREEN);
+}
+
+void StatusDialogManager::HideWindow(void)
+{
+	ShowWindow(this->Handle, SW_HIDE);
+	this->IsShowing = FALSE;
+}
+
+BOOLEAN StatusDialogManager::IsVisible(void)
+{
+	return this->IsShowing;
 }
 
 void StatusDialogManager::SetSlotBytes(unsigned int CurrentSlot, float SlotBytes)

@@ -241,12 +241,17 @@ void Emulator::UpdateDeviceState(DeviceState EventCode)
 	Device.State = EventCode;
 
 	// Notify plugins
-	//for (auto iterator = PluginList.begin(); iterator != PluginList.end(); ++iterator) {
-	//	PluginAPI::LoadedPlugin Plugin = *iterator;
-	//	Plugin.Information.DeviceHook(EventCode, Plugin.Information.HookParam);
-	//}
+	if (Plugin.Handle) {
+		Plugin.Information.DeviceHook(EventCode, Plugin.Information.HookParam);
+	}
 
 }
+
+void WINAPI Emulator::WriteFormattedOutput(UINT Color, LPCSTR FormattedText)
+{
+	MainDialog->InsertFormattedText(Color, FormattedText);
+}
+
 int WINAPI Emulator::WriteOutputTimestamp(void)
 {
 	MainDialog->Timestamp();

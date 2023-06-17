@@ -147,6 +147,7 @@
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="MainDialog.cpp" />
+    <ClCompile Include="PluginAPI.cpp" />
     <ClCompile Include="RunScriptDialog.cpp" />
     <ClCompile Include="StatusDialog.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="MainDialog.h" />
     <ClInclude Include="ParseBuffer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PluginAPI.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RunScriptDialog.h" />
     <ClInclude Include="StatusDialog.h" />
@@ -169,6 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Visual Zen++.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="transparent.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

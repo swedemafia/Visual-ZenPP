@@ -208,7 +208,7 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
                     // Determine if file was able to be read
                     if (FileHandle == INVALID_HANDLE_VALUE) {
                         Timestamp();
-                        InsertFormattedText(RED, _c("Error loading file %s!\r\n"), Cronus.Slot[i].FileName);
+                        InsertFormattedText(RED, _c("Error: failed to load file %s! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
                     }
                     else {
 
@@ -219,7 +219,7 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 
                             // Prompt user of error querying file size
                             Timestamp();
-                            InsertFormattedText(RED, _c("Error loading file %s, unable to query file size!\r\n"), Cronus.Slot[i].FileName);
+                            InsertFormattedText(RED, _c("Error: failed to load file file %s, unable to query file size! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
 
                             // Clear slot
                             memset(&Cronus.Slot[i], 0, sizeof(Cronus.Slot[i]));
@@ -245,8 +245,8 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 INT_PTR MainDialogManager::OnClose(WPARAM wParam, LPARAM lParam)
 {
     Communication::Disconnect();
-    EndDialog(this->Handle, 0);
     PostQuitMessage(0);
+    EndDialog(this->Handle, 0);
 	return TRUE;
 }
 
@@ -254,6 +254,35 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 {
     // Determine which dialog object was clicked
     switch (LOWORD(wParam)) {
+    // Load Plugin
+    case MENU_PLUGINS_LOAD_PLUGIN:
+        OPENFILENAMEA PluginFileName;
+        char ChosenPlugin[MAX_PATH];
+
+        memset(&PluginFileName, 0, sizeof(OPENFILENAMEA));
+        memset(&ChosenPlugin, 0, MAX_PATH);
+
+        // Open dialog only for *.bin files
+        PluginFileName.lStructSize = sizeof(OPENFILENAMEA);
+        PluginFileName.hwndOwner = this->Handle;
+        PluginFileName.lpstrFile = ChosenPlugin;
+        PluginFileName.nMaxFile = sizeof(ChosenPlugin);
+        PluginFileName.lpstrFilter = _c("Zen++ Plugins (*.zpl)\0*.zpl\0");
+        PluginFileName.nFilterIndex = 1;
+        PluginFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
+
+        // Open the dialog and set the label if the user selects a file
+        if (GetOpenFileNameA(&PluginFileName) == TRUE) {
+            PluginAPI::LoadPlugin(PathFindFileNameA(PluginFileName.lpstrFile));
+        }
+
+
+        break;
+    // Unload plugin:
+    case MENU_PLUGINS_UNLOAD_PLUGIN:
+        PluginAPI::UnloadPlugin();
+        break;
+
     // About
     case MENU_ABOUT_ABOUT:
         Timestamp();
@@ -543,7 +572,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                     CronusZen::ChangeSlotA();
                     CronusZen::StreamIoStatus(CronusZen::Off);
                     CronusZen::ChangeSlotB();
-                    CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport | CronusZen::Ps5Adt);
+                    CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport);
                 }
                 else {
                     Timestamp();
@@ -717,8 +746,8 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 for (auto i = 0, j = 1; j < 8; j++) {
                     if (!strlen((const char*)Cronus.Slot[i].FileName)) {
                         if (strlen((const char*)Cronus.Slot[j].FileName)) {
-                            memcpy(Cronus.Slot[i].FileName, Cronus.Slot[j].FileName, strlen((const char*)Cronus.Slot[j].FileName));
-                            memset(Cronus.Slot[j].FileName, 0, sizeof(Cronus.Slot[j].FileName));
+                            memcpy(&Cronus.Slot[i], &Cronus.Slot[j], sizeof(Cronus.Slot[j]));
+                            memset(&Cronus.Slot[j], 0, sizeof(Cronus.Slot[j]));
                             i++;
                         }
                     }
@@ -761,9 +790,15 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
         // Disconnect if we are currently connected
         if (Connection.State != Communication::Connection_Disconnected)
             Communication::Disconnect();
-           
-        // Begin connection process
-        Communication::Connect();
+          
+        if (Device.Path != nullptr) {
+            // Begin connection process
+            Communication::Connect();
+        }
+        else {
+            this->Timestamp();
+            this->InsertFormattedText(RED, _c("Cannot connect; unable to locate a compatible USB device!\r\n"));
+        }
 
         break;
 
@@ -772,7 +807,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
     // Clear output:
     case MENU_FILE_CLEAR_OUTPUT:
-        SetWindowText(this->RichEditOutput, (LPCWSTR)L"");
+        SetWindowText(this->RichEditOutput, NULL);
         break;
 
     }
@@ -839,7 +874,7 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
                 Timestamp();
                 InsertFormattedText(GRAY, _c("Attempting to change the virtual machine speed to %dms...\r\n"), SliderValue);
                 CronusZen::SetVmCtrl(SliderValue);
-                CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport | CronusZen::Ps5Adt);
+                CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport);
             }
         }
     }
@@ -850,6 +885,8 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
 INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 {
     RECT DialogRect;
+
+    SendMessage(this->Handle, WM_SETICON, ICON_BIG, (LPARAM)LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ICO_ICON)));
 
     // Get window rect
     GetWindowRect(this->Handle, &DialogRect);
@@ -880,7 +917,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 
     // Menu:
     this->MainMenu = GetMenu(this->Handle);
-    
+
     // Labels:
     this->CurrentSlotLabel = GetDlgItem(this->Handle, LABEL_CURRENT_SLOT);
 
@@ -1005,6 +1042,8 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 
     // Create SlotConfig directory
     CreateDirectoryA("SlotConfig", NULL);
+
+    SetWindowTextA(this->Handle, _c("Zen++ - Copyright (C) 2023 - Swedemafia"));
 
 	return TRUE;
 }
@@ -1174,4 +1213,16 @@ void MainDialogManager::UpdateCaption(const char* Status)
 
     // Set window caption
     SetWindowTextA(this->Handle, Output);
+}
+
+void MainDialogManager::UpdatePluginMenu(void)
+{
+    if (Plugin.Handle) {
+        EnableMenuItem(MainDialog->MainMenu, MENU_PLUGINS_LOAD_PLUGIN, MF_DISABLED);
+        EnableMenuItem(MainDialog->MainMenu, MENU_PLUGINS_UNLOAD_PLUGIN, MF_ENABLED);
+    }
+    else {
+        EnableMenuItem(MainDialog->MainMenu, MENU_PLUGINS_LOAD_PLUGIN, MF_ENABLED);
+        EnableMenuItem(MainDialog->MainMenu, MENU_PLUGINS_UNLOAD_PLUGIN, MF_DISABLED);
+    }
 }

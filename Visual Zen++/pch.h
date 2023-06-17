@@ -33,6 +33,7 @@
 #include "MainDialog.h"
 #include "AppSettings.h"
 #include "Functions.h"
+#include "PluginAPI.h"
 
 #undef DEFINE_DEVPROPKEY
 #define DEFINE_DEVPROPKEY(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid) EXTERN_C const DEVPROPKEY DECLSPEC_SELECTANY name = { { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }, pid }
@@ -41,6 +42,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_BusReportedDeviceDesc, 0x540b947e, 0x8b40, 0x45
 
 // Global classes
 extern class MainDialogManager* MainDialog;
+extern struct PluginAPI::LoadedPlugin Plugin;
 
 // Global structures
 extern struct Communication::ConnectionInformation Connection;

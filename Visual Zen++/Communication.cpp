@@ -2,6 +2,7 @@
 
 BOOL Communication::AssociateWithCompletionPort(void)
 {
+
 	if ((Connection.CompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1)) == NULL)
 		return FALSE;
 
@@ -50,14 +51,14 @@ BOOL Communication::Connect(void)
 	// Attempt to open connection to the device
 	if ((Connection.Handle = CreateFileW(Device.Path, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to establish a connection!\r\n"));
+		MainDialog->InsertFormattedText(RED, _c("Error: failed to establish a connection! (error: %d)\r\n"), GetLastError());
 		return FALSE;
 	}
 
 	// Attempt to associate with an I/O completion port
 	if (!AssociateWithCompletionPort()) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to associate with an I/O completion port!\r\n"));
+		MainDialog->InsertFormattedText(RED, _c("Error: failed to associate with an I/O completion port! (error: %d)\r\n"), GetLastError());
 		Disconnect();
 		return FALSE;
 	}
@@ -192,6 +193,7 @@ BOOL Communication::OnRecvData(OVERLAPPED* Overlapped, DWORD BytesReceived)
 	BYTE Byte3 = *(BYTE*)(Connection.RecvBuffer + 3);
 	BYTE Byte4 = *(BYTE*)(Connection.RecvBuffer + 4);
 
+	// For whatever reason these packet sizes are provided with the wrong size
 	if (Byte1 == 1 && Byte2 == 0x2e && Byte3 == 0 && Byte4 == 1) {
 		Connection.TotalRecvBytes = 60;
 		Connection.BytesRemaining = 60;
@@ -358,8 +360,7 @@ void Communication::UpdateConnectionState(ConnectionState EventCode)
 	}
 
 	// Notify plugins
-	//for (auto iterator = PluginList.begin(); iterator != PluginList.end(); ++iterator) {
-	//	PluginAPI::LoadedPlugin Plugin = *iterator;
-	//	Plugin.Information.ConnectionHook(EventCode, Plugin.Information.HookParam);
-	//}
+	if (Plugin.Handle) {
+		Plugin.Information.ConnectionHook(EventCode, Plugin.Information.HookParam);
+	}
 }

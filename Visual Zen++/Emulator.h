@@ -38,9 +38,8 @@ namespace Emulator
 	void UpdateDeviceState(DeviceState EventCode);
 
 	// Display functions:
-	//void WriteFormattedOutput(UINT Color, LPCSTR Format, ...);
+	void WINAPI WriteFormattedOutput(UINT Color, LPCSTR FormattedText);
 	int WINAPI WriteOutputTimestamp(void);
-	//int WINAPI WriteOutputString(LPCSTR String);
 }
 
 #endif

@@ -13,6 +13,7 @@ public:
 	// User functions:
 	void DisplayWindow(void);
 	void HideWindow(void);
+	BOOLEAN IsVisible(void);
 	void SetSlotBytes(unsigned int CurrentSlot, float SlotBytes);
 	void SetTotalBytes(unsigned int TotalSlots, float TotalBytes);
 	void UpdateProgress(float BytesWritten);
@@ -39,6 +40,9 @@ private:
 	float TotalBytes;
 	float TotalSlotBytes;
 	unsigned int TotalSlots;
+
+	// Window state
+	BOOLEAN IsShowing;
 };
 
 #endif

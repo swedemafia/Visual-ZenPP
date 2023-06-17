@@ -103,7 +103,7 @@ void ChangeOperationalMode(MainDialogManager::OperationalModeIDs Mode)
             UncheckSubMenuItems(MenuList_Operational, MENU_DEVICE_OPERATIONAL_STANDARD);
             CronusZen::SendSingleFragment(CronusZen::DeviceMode_Normal);
             MainDialog->Timestamp();
-            MainDialog->InsertFormattedText(YELLOW, _c("Opertional mode is set to standard.\r\n"));
+            MainDialog->InsertFormattedText(YELLOW, _c("Operational mode is set to standard.\r\n"));
 
             break;
 
