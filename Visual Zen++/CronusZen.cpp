@@ -1190,7 +1190,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 		CronusZen::RunScript((const char*)Cronus.Slot[9].FilePath);
 
 		// Check if we received a response back
-		Sleep(1000);
+		Sleep(4000);
 
 		// Check if the connection state updated
 		if (Connection.State != Communication::Connection_Connected) {
