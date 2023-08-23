@@ -57,7 +57,7 @@ MENU MENU_MAIN
 FONT 11, "Microsoft Sans Serif", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Device Manager",GROUP_DEVICE_MANAGER,11,7,268,145
-    CONTROL         "",RICHEDIT_OUTPUT,"RichEdit20W",WS_VSCROLL | 0x844,16,168,258,112,WS_EX_CLIENTEDGE
+    CONTROL         "",RICHEDIT_OUTPUT,"RichEdit20W",ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL,16,168,258,112,WS_EX_CLIENTEDGE
     PUSHBUTTON      "Clear &Bluetooth",1003,292,230,66,15,WS_DISABLED
     LTEXT           "DualShock4 Lightbar Brightness:",1018,24,112,107,10
     CONTROL         "Use PS4 Speciality",1007,"Button",BS_AUTORADIOBUTTON | WS_DISABLED | WS_TABSTOP,134,128,107,10
@@ -83,12 +83,13 @@ BEGIN
     CTEXT           "",1025,292,97,135,21,SS_CENTERIMAGE | WS_BORDER
     CTEXT           "",LABEL_SLOT_7,292,177,135,21,SS_CENTERIMAGE | WS_BORDER
     CTEXT           "",LABEL_SLOT_8,292,203,135,21,SS_CENTERIMAGE | WS_BORDER
-    LTEXT           "",LABEL_CURRENT_SLOT,294,269,62,8
+    LTEXT           "",LABEL_CURRENT_SLOT,293,266,62,8
     GROUPBOX        "Output",1021,11,157,268,132
     COMBOBOX        1009,137,21,131,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Slots Manager",GROUP_SLOTS_MANAGER,285,7,149,282
     PUSHBUTTON      "&Cycle Slots",BUTTON_CYCLE_SLOTS,361,266,66,15,WS_DISABLED
     COMBOBOX        COMBO_REMOTE_SLOT_CHANGE,137,58,131,30,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    LTEXT           "",LABEL_CPU_USAGE,293,276,62,8
 END
 
 DLG_STATUS DIALOGEX 0, 0, 326, 57
@@ -214,7 +215,7 @@ BEGIN
             MENUITEM "&Nintendo Switch",            MENU_DEVICE_EMULATOR_NINTENDOSWITCH
             MENUITEM "PlayStation &3",              MENU_DEVICE_EMULATOR_PLAYSTATION3
             MENUITEM "&PlayStation 4/5",            MENU_DEVICE_EMULATOR_PLAYSTATION45
-            MENUITEM "Xbox 3&60",                   MENU_DEVICE_EMULATOR_XBOX360
+            MENUITEM "PC/Mobile | Xbox 3&60",       MENU_DEVICE_EMULATOR_XBOX360
             MENUITEM "&Xbox One X/S",               MENU_DEVICE_EMULATOR_XBOXONE, INACTIVE
         END
         POPUP "&Operational Mode"
@@ -233,7 +234,7 @@ BEGIN
         MENUITEM "PS4 &Speciality",             MENU_DEVICE_PS4SPECIALITY, INACTIVE
         MENUITEM "Remote &Play",                MENU_DEVICE_REMOTE_PLAY, INACTIVE
     END
-    POPUP "&Plugins"
+    POPUP "&Plugins", INACTIVE
     BEGIN
         MENUITEM "&Load Plugin...",             MENU_PLUGINS_LOAD_PLUGIN
         MENUITEM "&Unload Plugin",              MENU_PLUGINS_UNLOAD_PLUGIN, INACTIVE
@@ -261,8 +262,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,1,18
- PRODUCTVERSION 2,0,1,18
+ FILEVERSION 2,0,2,24
+ PRODUCTVERSION 2,0,2,24
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -279,12 +280,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Asgard"
             VALUE "FileDescription", "Interoperable USB device application"
-            VALUE "FileVersion", "2.0.1.18"
+            VALUE "FileVersion", "2.0.2.24"
             VALUE "InternalName", "Visual.exe"
             VALUE "LegalCopyright", "Copyright (C) 2023"
             VALUE "OriginalFilename", "Visual.exe"
             VALUE "ProductName", "Visual Zen++"
-            VALUE "ProductVersion", "2.0.1.18"
+            VALUE "ProductVersion", "2.0.2.24"
         END
     END
     BLOCK "VarFileInfo"

@@ -21,7 +21,6 @@
 #include <Shlwapi.h>
 
 #include "resource.h"
-#include "Crypt.h"
 #include "ParseBuffer.h"
 #include "StoreBuffer.h"
 #include "Communication.h"

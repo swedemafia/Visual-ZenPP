@@ -24,7 +24,7 @@ void RunScriptDialogManager::SetTotalBytes(float TotalBytes)
 	SendMessage(this->TotalProgress, PBM_SETPOS, 0, 0);
 
 	// Update total status label
-	SetWindowTextA(this->TotalStatusLabel, _c("Loading game pack to device..."));
+	SetWindowTextA(this->TotalStatusLabel, "Loading game pack to device...");
 }
 
 void RunScriptDialogManager::UpdateProgress(float BytesWritten)
@@ -38,11 +38,11 @@ void RunScriptDialogManager::UpdateProgress(float BytesWritten)
 	char Buffer[64] = "";
 
 	// Calculate total percentage label
-	sprintf_s(Buffer, _c("%.02f%%"), (this->TotalBytesWritten / this->TotalBytes) * 100);
+	sprintf_s(Buffer, "%.02f%%", (this->TotalBytesWritten / this->TotalBytes) * 100);
 	SetWindowTextA(this->TotalPercentageLabel, Buffer);
 
 	// Generate total status label
-	sprintf_s(Buffer, _c("Uploaded %.0f of %.0f bytes..."), this->TotalBytesWritten, this->TotalBytes);
+	sprintf_s(Buffer, "Uploaded %.0f of %.0f bytes...", this->TotalBytesWritten, this->TotalBytes);
 	SetWindowTextA(this->TotalProgressLabel, Buffer);
 
 

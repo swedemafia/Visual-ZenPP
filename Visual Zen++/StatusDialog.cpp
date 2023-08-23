@@ -34,7 +34,7 @@ void StatusDialogManager::SetSlotBytes(unsigned int CurrentSlot, float SlotBytes
 	SendMessage(this->CurrentSlotProgress, PBM_SETPOS, 0, 0);
 
 	// Update slot status label
-	wsprintfA(Buffer, _c("Writing to slot #%d..."), CurrentSlot);
+	wsprintfA(Buffer, "Writing to slot #%d...", CurrentSlot);
 	SetWindowTextA(this->SlotStatusLabel, Buffer);
 }
 
@@ -50,7 +50,7 @@ void StatusDialogManager::SetTotalBytes(unsigned int TotalSlots, float TotalByte
 	SendMessage(this->TotalProgress, PBM_SETPOS, 0, 0);
 
 	// Update total status label
-	wsprintfA(Buffer, _c("Uploading %d slot%s..."), this->TotalSlots, (this->TotalSlots == 1) ? "" : "s");
+	wsprintfA(Buffer, "Uploading %d slot%s...", this->TotalSlots, (this->TotalSlots == 1) ? "" : "s");
 	SetWindowTextA(this->TotalStatusLabel, Buffer);
 }
 

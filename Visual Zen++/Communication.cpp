@@ -40,25 +40,26 @@ BOOL Communication::Connect(void)
 	// Make sure emulator is not connected already
 	if (Connection.Handle != INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("A connection is already established!\r\n"));
+		MainDialog->InsertFormattedText(RED, "A connection is already established!\r\n");
 		return FALSE;
 	}
 
 	// Prompt user status
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GRAY, _c("Connecting to %s...\r\n"), Emulator::FromUnicode(Device.Path));
+	MainDialog->InsertFormattedText(GRAY, "Connecting to %s...\r\n", Emulator::FromUnicode(Device.Path));
 
 	// Attempt to open connection to the device
 	if ((Connection.Handle = CreateFileW(Device.Path, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Error: failed to establish a connection! (error: %d)\r\n"), GetLastError());
+		MainDialog->InsertFormattedText(RED, "Error: failed to establish a connection! (error: %d)\r\n", GetLastError());
+		Disconnect();
 		return FALSE;
 	}
 
 	// Attempt to associate with an I/O completion port
 	if (!AssociateWithCompletionPort()) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Error: failed to associate with an I/O completion port! (error: %d)\r\n"), GetLastError());
+		MainDialog->InsertFormattedText(RED, "Error: failed to associate with an I/O completion port! (error: %d)\r\n", GetLastError());
 		Disconnect();
 		return FALSE;
 	}
@@ -77,7 +78,7 @@ void Communication::Disconnect(void)
 	// Make sure emulator is not connected already
 	if (Connection.Handle == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("No connection is established!\r\n"));
+		MainDialog->InsertFormattedText(RED, "No connection is established!\r\n");
 		return;
 	}
 
@@ -95,7 +96,7 @@ void Communication::Disconnect(void)
 	// Only notify user if the device is not going through a console-commanded reset cycle
 	if (Connection.State != Connection_ResetDevice) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Disconnected from the device!\r\n"));
+		MainDialog->InsertFormattedText(RED, "Disconnected from the device!\r\n");
 
 		// Set connection state
 		UpdateConnectionState(Connection_Disconnected);
@@ -157,10 +158,14 @@ BOOL Communication::OnConnect(OVERLAPPED* Overlapped)
 
 	// Notify user of success
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GREEN, _c("Successfully established a connection to the device!\r\n"));
+	MainDialog->InsertFormattedText(GREEN, "Successfully established a connection to the device!\r\n");
 
 	// Update state
 	UpdateConnectionState(Connection_Connecting);
+
+	// Notify user of success (continued)
+	MainDialog->Timestamp();
+	MainDialog->InsertFormattedText(GRAY, "Initiating communication with the device...\r\n");
 
 	// Send initial communication
 	CronusZen::StreamIoStatus(CronusZen::Off);
@@ -278,8 +283,7 @@ void Communication::PerformNextRead(void)
 		if (GetLastError() != ERROR_IO_PENDING) {
 
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Error: ReadFile failed (error: %d)!\r\n"), GetLastError());
-
+			MainDialog->InsertFormattedText(RED, "Error: ReadFile failed (error: %d)!\r\n", GetLastError());
 			Disconnect();
 		}
 	}
@@ -297,7 +301,7 @@ void Communication::SendPacket(BYTE* Data)
 
 			if (Connection.State != Connection_ResetDevice) {
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(RED, _c("Error: WriteFile failed (error: %d)!\r\n"), GetLastError());
+				MainDialog->InsertFormattedText(RED, "Error: WriteFile failed (error: %d)!\r\n", GetLastError());
 			}
 
 			Disconnect();

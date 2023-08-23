@@ -45,6 +45,7 @@
 #define LABEL_CURRENT_SLOT              1032
 #define LABEL_DS4_BRIGHTNESS_VALUE      1033
 #define LABEL_VM_SPEED_VALUE            1034
+#define LABEL_CPU_USAGE                 1035
 #define PROGRESS_CURRENT_SLOT           1051
 #define PROGRESS_TOTAL                  1052
 #define LABEL_STATUS_SLOT               1053

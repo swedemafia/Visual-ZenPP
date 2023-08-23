@@ -51,6 +51,7 @@ public:
 
 	// Labels:
 	HWND CurrentSlotLabel;
+	HWND CPUUsageLabel;
 
 	// List box:
 	HWND ScriptsListBox;

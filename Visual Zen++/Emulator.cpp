@@ -7,7 +7,7 @@ DWORD Emulator::DeviceThreadProc(LPVOID Parameter)
 	while (Console.InputThread != INVALID_HANDLE_VALUE) {
 
 		// Attempt to locate device
-		BOOL Result = LocateDevice(_cw(L"Cronus Bridge"));
+		BOOL Result = LocateDevice(L"Cronus Bridge");
 
 		// Check for a status change
 		if (Result != Device.State) {
@@ -23,7 +23,7 @@ DWORD Emulator::DeviceThreadProc(LPVOID Parameter)
 
 				if (Connection.State != Communication::Connection_ResetDevice) {
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(RED, _c("Unable to locate a compatible USB device!\r\n"));
+					MainDialog->InsertFormattedText(RED, "Unable to locate a compatible USB device!\r\n");
 				}
 
 				// Clear stored device information
@@ -37,14 +37,14 @@ DWORD Emulator::DeviceThreadProc(LPVOID Parameter)
 
 				if (Connection.State != Communication::Connection_ResetDevice) {
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(GREEN, _c("Successfully located a compatible USB device!\r\n"));
+					MainDialog->InsertFormattedText(GREEN, "Successfully located a compatible USB device!\r\n");
 					SleepEx(100, FALSE);
 					LocateDevicePath();
 					Communication::Connect();
 				}
 				else {
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(GREEN, _c("Successfully reset the device!\r\n"));
+					MainDialog->InsertFormattedText(GREEN, "Successfully reset the device!\r\n");
 					SleepEx(100, FALSE);
 					LocateDevicePath();
 					Communication::Connect();

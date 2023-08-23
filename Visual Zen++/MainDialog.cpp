@@ -10,6 +10,7 @@ void MainDialogManager::DisableDialog(void)
 {
     // Clear window text
     SetWindowTextA(this->CurrentSlotLabel, "");
+    SetWindowTextA(this->CPUUsageLabel, "");
 
     // Disable menus
     // 
@@ -191,7 +192,7 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
                 OpenFileName.hwndOwner = this->Handle;
                 OpenFileName.lpstrFile = ChosenFile;
                 OpenFileName.nMaxFile = sizeof(ChosenFile);
-                OpenFileName.lpstrFilter = _c("Compiled Scripts (*.bin)\0*.bin\0");
+                OpenFileName.lpstrFilter = "Compiled Scripts (*.bin)\0*.bin\0";
                 OpenFileName.nFilterIndex = 1;
                 OpenFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
 
@@ -208,7 +209,7 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
                     // Determine if file was able to be read
                     if (FileHandle == INVALID_HANDLE_VALUE) {
                         Timestamp();
-                        InsertFormattedText(RED, _c("Error: failed to load file %s! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
+                        InsertFormattedText(RED, "Error: failed to load file %s! (error: %d)\r\n", Cronus.Slot[i].FileName, GetLastError());
                     }
                     else {
 
@@ -219,7 +220,7 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 
                             // Prompt user of error querying file size
                             Timestamp();
-                            InsertFormattedText(RED, _c("Error: failed to load file file %s, unable to query file size! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
+                            InsertFormattedText(RED, "Error: failed to load file file %s, unable to query file size! (error: %d)\r\n", Cronus.Slot[i].FileName, GetLastError());
 
                             // Clear slot
                             memset(&Cronus.Slot[i], 0, sizeof(Cronus.Slot[i]));
@@ -244,6 +245,8 @@ INT_PTR MainDialogManager::OnLButtonDown(WPARAM wParam, LPARAM lParam)
 
 INT_PTR MainDialogManager::OnClose(WPARAM wParam, LPARAM lParam)
 {
+    CronusZen::ExitApiMode();
+    CronusZen::StreamIoStatus(CronusZen::Off);
     Communication::Disconnect();
     PostQuitMessage(0);
     EndDialog(this->Handle, 0);
@@ -267,13 +270,13 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
         PluginFileName.hwndOwner = this->Handle;
         PluginFileName.lpstrFile = ChosenPlugin;
         PluginFileName.nMaxFile = sizeof(ChosenPlugin);
-        PluginFileName.lpstrFilter = _c("Zen++ Plugins (*.zpl)\0*.zpl\0");
+        PluginFileName.lpstrFilter = "Zen++ Plugins (*.zpl)\0*.zpl\0";
         PluginFileName.nFilterIndex = 1;
         PluginFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
 
         // Open the dialog and set the label if the user selects a file
         if (GetOpenFileNameA(&PluginFileName) == TRUE) {
-            PluginAPI::LoadPlugin(PathFindFileNameA(PluginFileName.lpstrFile));
+            PluginAPI::LoadPlugin(PluginFileName.lpstrFile);
         }
 
 
@@ -286,17 +289,19 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
     // About
     case MENU_ABOUT_ABOUT:
         Timestamp();
-        InsertFormattedText(LIGHTBLUE, _c("Zen++ - Copyright (C) 2023 Swedemafia - version %d.%02d.\r\n"), VERSION_MAJOR, VERSION_MINOR);
+        InsertFormattedText(LIGHTBLUE, "Zen++ - version %d.%02d - an Asgard production by Swedemafia.\r\n", VERSION_MAJOR, VERSION_MINOR);
         Timestamp();
-        InsertFormattedText(PURPLE, _c("This program is not affiliated with or an official product of Cronus and/or Collective Minds Gaming Co. Ltd.\r\n"));
-        Timestamp();
-        InsertFormattedText(LIGHTBLUE, _c("Zen++ was developed to protect developers within the community.\r\n"));
+        InsertFormattedText(LIGHTBLUE, "Zen++ was developed to protect script developers.\r\n");
 
         // Enable URL detection
         SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, TRUE, 0);
 
         Timestamp();
-        InsertFormattedText(LIGHTBLUE, _c("For support, join the Discord: https://discord.gg/tGH7QxtPam.\r\n"));
+        InsertFormattedText(LIGHTBLUE, "Join Asgard (Discord server) for support: https://discord.gg/tGH7QxtPam.\r\n");
+        Timestamp();
+        InsertFormattedText(PURPLE, "Zen++ is not an official product of Collective Minds Gaming Co. Ltd.\r\n");
+        Timestamp();
+        InsertFormattedText(PURPLE, "The developer is not affiliated with Collective Minds Gaming Co. Ltd.\r\n");
 
         // Disable URL detection
         SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, FALSE, 0);
@@ -311,7 +316,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
         // Prompt user
         Timestamp();
-        InsertFormattedText(GRAY, _c("For support, join the Discord: https://discord.gg/tGH7QxtPam.\r\n"));
+        InsertFormattedText(GRAY, "For support, join the Discord: https://discord.gg/tGH7QxtPam.\r\n");
 
         // Disable URL detection
         SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, FALSE, 0);
@@ -323,12 +328,12 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
         // Initialize buffer
         memset(&Buffer, 0, sizeof(Buffer));
-        wsprintfA(Buffer, _c("Are you sure you want to remove %s from slot #%d?"), Cronus.Slot[PopupSlot].FileName, PopupSlot + 1);
+        wsprintfA(Buffer, "Are you sure you want to remove %s from slot #%d?", Cronus.Slot[PopupSlot].FileName, PopupSlot + 1);
 
         // Verify user wants to remove script
-        if (MessageBoxA(this->Handle, Buffer, _c("Remove from Slot?"), MB_YESNO | MB_ICONQUESTION) == IDYES) {
+        if (MessageBoxA(this->Handle, Buffer, "Remove from Slot?", MB_YESNO | MB_ICONQUESTION) == IDYES) {
             memset(&Cronus.Slot[PopupSlot], 0, sizeof(Cronus.Slot[PopupSlot]));
-            SetWindowTextA(GetDlgItem(this->Handle, LABEL_SLOT_1 + PopupSlot), _c(""));
+            SetWindowTextA(GetDlgItem(this->Handle, LABEL_SLOT_1 + PopupSlot), "");
         }
 
         break;
@@ -413,26 +418,26 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 // Notify user
                 Timestamp();
-                InsertFormattedText(GRAY, _c("Attempting to clear registered Bluetooth devices...\r\n"));
+                InsertFormattedText(GRAY, "Attempting to clear registered Bluetooth devices...\r\n");
 
                 // Create factory reset thread
                 Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_ClearBtCommand, 0, NULL);
 
                 // Check for success
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
-                    InsertFormattedText(RED, _c("Failed to initiate clear registered Bluetooth devices thread (error: %d)!\r\n"), GetLastError());
+                    InsertFormattedText(RED, "Failed to initiate clear registered Bluetooth devices thread (error: %d)!\r\n", GetLastError());
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to clear the registered Bluetooth devices!\r\n"));
+                InsertFormattedText(RED, "You must wait for the operation to complete before attempting to clear the registered Bluetooth devices!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to clear the registered Bluetooth devices!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to clear the registered Bluetooth devices!\r\n");
         }
 
         break;
@@ -447,7 +452,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 // Notify user
                 Timestamp();
-                InsertFormattedText(GRAY, _c("Attempting to erase slots...\r\n"));
+                InsertFormattedText(GRAY, "Attempting to erase slots...\r\n");
 
                 // Create erase slots thread
                 Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_DeviceCleanup, 0, NULL);
@@ -455,19 +460,19 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 // Check for success
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
                     Timestamp();
-                    InsertFormattedText(RED, _c("Failed to initiate erase slot thread (error: %d)!\r\n"), GetLastError());
+                    InsertFormattedText(RED, "Failed to initiate erase slot thread (error: %d)!\r\n", GetLastError());
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to erase slots!\r\n"));
+                InsertFormattedText(RED, "You must wait for the operation to complete before attempting to erase slots!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to erase the slots!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to erase the slots!\r\n");
         }
 
         break;
@@ -482,7 +487,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 // Notify user
                 Timestamp();
-                InsertFormattedText(GRAY, _c("Attempting to factory reset the device...\r\n"));
+                InsertFormattedText(GRAY, "Attempting to factory reset the device...\r\n");
 
                 // Create factory reset thread
                 Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_FactoryReset, 0, NULL);
@@ -490,19 +495,19 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 // Check for success
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
                     Timestamp();
-                    InsertFormattedText(RED, _c("Failed to initiate factory reset thread (error: %d)!\r\n"), GetLastError());
+                    InsertFormattedText(RED, "Failed to initiate factory reset thread (error: %d)!\r\n", GetLastError());
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to factory reset!\r\n"));
+                InsertFormattedText(RED, "You must wait for the operation to complete before attempting to factory reset!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to factory reset!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to factory reset!\r\n");
         }
 
         break;
@@ -517,7 +522,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
 
                 // Notify user
                 Timestamp();
-                InsertFormattedText(GRAY, _c("Attempting to reset the device...\r\n"));
+                InsertFormattedText(GRAY, "Attempting to reset the device...\r\n");
 
                 // Create factory reset thread
                 Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_ResetDevice, 0, NULL);
@@ -525,19 +530,19 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 // Check for success
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
                     Timestamp();
-                    InsertFormattedText(RED, _c("Failed to initiate reset thread (error: %d)!\r\n"), GetLastError());
+                    InsertFormattedText(RED, "Failed to initiate reset thread (error: %d)!\r\n", GetLastError());
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to factory reset!\r\n"));
+                InsertFormattedText(RED, "You must wait for the operation to complete before attempting to factory reset!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to reset the device!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to reset the device!\r\n");
         }
 
         break;
@@ -562,7 +567,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 if (NumberOfSlots) {
                     // Notify user
                     Timestamp();
-                    InsertFormattedText(GRAY, _c("Attempting to cycle slots...\r\n"));
+                    InsertFormattedText(GRAY, "Attempting to cycle slots...\r\n");
 
                     // Update connection status
                     Communication::UpdateConnectionState(Communication::Connection_CycleSlot);
@@ -576,18 +581,18 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 }
                 else {
                     Timestamp();
-                    InsertFormattedText(RED, _c("There are no slots to cycle!\r\n"));
+                    InsertFormattedText(RED, "There are no slots to cycle!\r\n");
                 }
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must wait for the operation to complete prior to attempting to cycle to the next GPC!\r\n"));
+                InsertFormattedText(RED, "You must wait for the operation to complete prior to attempting to cycle to the next GPC!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to cycle to the next GPC!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to cycle to the next GPC!\r\n");
         }
 
         break;
@@ -596,7 +601,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
     case MENU_DEVICE_SERIAL_NUMBER:
         // Notify user of serial number
         this->Timestamp();
-        this->InsertFormattedText(GRAY, _c("Device serial number: %s.\r\n"), Cronus.SerialNumber);
+        this->InsertFormattedText(GRAY, "Device serial number: %s.\r\n", Cronus.SerialNumber);
         break;
 
     // PS4 Speciality:
@@ -682,7 +687,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
         OpenFileName.hwndOwner = this->Handle;
         OpenFileName.lpstrFile = ChosenFile;
         OpenFileName.nMaxFile = sizeof(ChosenFile);
-        OpenFileName.lpstrFilter = _c("Compiled Scripts (*.bin)\0*.bin\0");
+        OpenFileName.lpstrFilter = "Compiled Scripts (*.bin)\0*.bin\0";
         OpenFileName.nFilterIndex = 1;
         OpenFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_DONTADDTORECENT | OFN_NOCHANGEDIR;
 
@@ -696,11 +701,12 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
 
                     // Find the position of the last backslash character
+                    memcpy(Cronus.Slot[9].FilePath, OpenFileName.lpstrFile, sizeof(Cronus.Slot[9].FilePath));
                     memcpy(Cronus.Slot[9].FileName, PathFindFileNameA(OpenFileName.lpstrFile), 64);
 
                     // Notify user
                     Timestamp();
-                    InsertFormattedText(GRAY, _c("Attempting to run script %s...\r\n"), Cronus.Slot[9].FileName);
+                    InsertFormattedText(GRAY, "Attempting to run script %s...\r\n", Cronus.Slot[9].FileName);
 
                     // Create factory reset thread
                     Cronus.Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CronusZen::ThreadProc, (LPVOID)Communication::Connection_RunScript, 0, NULL);
@@ -708,24 +714,24 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                     // Check for success
                     if (Cronus.Thread == INVALID_HANDLE_VALUE) {
                         Timestamp();
-                        InsertFormattedText(RED, _c("Failed to initiate run script thread (error: %d)!\r\n"), GetLastError());
+                        InsertFormattedText(RED, "Failed to initiate run script thread (error: %d)!\r\n", GetLastError());
                     }
 
                 }
                 else {
                     Timestamp();
-                    InsertFormattedText(RED, _c("You must wait for the operation to complete before attempting to run a script!\r\n"));
+                    InsertFormattedText(RED, "You must wait for the operation to complete before attempting to run a script!\r\n");
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must connect to the device before attempting to run a script!\r\n"));
+                InsertFormattedText(RED, "You must connect to the device before attempting to run a script!\r\n");
             }
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("Failed to open, load and run %s!\r\n"), PathFindFileNameA(OpenFileName.lpstrFile));
+            InsertFormattedText(RED, "Failed to open, load and run %s!\r\n", PathFindFileNameA(OpenFileName.lpstrFile));
         }
 
 
@@ -762,19 +768,19 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
                 // Check for success
                 if (Cronus.Thread == INVALID_HANDLE_VALUE) {
                     Timestamp();
-                    InsertFormattedText(RED, _c("Failed to initiate flash config thread (error: %d)!\r\n"), GetLastError());
+                    InsertFormattedText(RED, "Failed to initiate flash config thread (error: %d)!\r\n", GetLastError());
                 }
 
             }
             else {
                 Timestamp();
-                InsertFormattedText(RED, _c("You must set some slots to load scripts before attempting to program the slots!\r\n"));
+                InsertFormattedText(RED, "You must set some slots to load scripts before attempting to program the slots!\r\n");
             }
 
         }
         else {
             Timestamp();
-            InsertFormattedText(RED, _c("You must connect to the device before attempting to program the slots!\r\n"));
+            InsertFormattedText(RED, "You must connect to the device before attempting to program the slots!\r\n");
         }
 
         break;
@@ -797,7 +803,7 @@ INT_PTR MainDialogManager::OnCommand(WPARAM wParam, LPARAM lParam)
         }
         else {
             this->Timestamp();
-            this->InsertFormattedText(RED, _c("Cannot connect; unable to locate a compatible USB device!\r\n"));
+            this->InsertFormattedText(RED, "Cannot connect; unable to locate a compatible USB device!\r\n");
         }
 
         break;
@@ -847,7 +853,7 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
 
             // Display the slider value (optional)
             char FormattedValue[8];
-            sprintf_s(FormattedValue, _c("%d%%"), SliderValue);
+            sprintf_s(FormattedValue, "%d%%", SliderValue);
             SendDlgItemMessageA(this->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)FormattedValue);
 
             // Submit update if we are connected
@@ -865,14 +871,14 @@ INT_PTR MainDialogManager::OnHScroll(WPARAM wParam, LPARAM lParam)
 
             // Display the slider value (optional)
             char FormattedValue[8];
-            sprintf_s(FormattedValue, _c("%dms"), SliderValue);
+            sprintf_s(FormattedValue, "%dms", SliderValue);
             SendDlgItemMessageA(this->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)FormattedValue);
 
             // Submit update if we are connected
             if (Connection.State == Communication::Connection_Connected) {
                 CronusZen::StreamIoStatus(CronusZen::Off);
                 Timestamp();
-                InsertFormattedText(GRAY, _c("Attempting to change the virtual machine speed to %dms...\r\n"), SliderValue);
+                InsertFormattedText(GRAY, "Attempting to change the virtual machine speed to %dms...\r\n", SliderValue);
                 CronusZen::SetVmCtrl(SliderValue);
                 CronusZen::StreamIoStatus(CronusZen::InputReport | CronusZen::OutputReport);
             }
@@ -920,6 +926,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
 
     // Labels:
     this->CurrentSlotLabel = GetDlgItem(this->Handle, LABEL_CURRENT_SLOT);
+    this->CPUUsageLabel = GetDlgItem(this->Handle, LABEL_CPU_USAGE);
 
     // Listbox:
     this->ScriptsListBox = GetDlgItem(this->Handle, LISTBOX_SCRIPTS);
@@ -949,28 +956,28 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     cf.cbSize = sizeof(CHARFORMAT);
     cf.dwMask = CFM_SIZE | CFM_FACE;
     cf.yHeight = 210;
-    wcscpy_s(cf.szFaceName, _cw(L"Microsoft Sans Serif"));
+    wcscpy_s(cf.szFaceName, L"Microsoft Sans Serif");
     SendMessage(this->RichEditOutput, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
 
     // Prepare combo drop list boxes
     // 
     // Emulator output protocol:
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Auto"));
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"PlayStation 3"));
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Xbox 360"));
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"PlayStation 4/5"));
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Xbox One X/S"));
-    SendMessage(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Nintendo Switch"));
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"Auto");
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"PlayStation 3");
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"PC/Mobile | Xbox 360");
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"PlayStation 4/5");
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"Xbox One X/S");
+    SendMessageA(this->EmulatorOutputComboBox, CB_ADDSTRING, 0, (LPARAM)"Nintendo Switch");
 
     // Remote slot change:
-    SendMessage(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Disabled"));
-    SendMessage(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"PS/Xbox + Share/View"));
-    SendMessage(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"PS/Xbox + L3/LS"));
+    SendMessageA(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)"Disabled");
+    SendMessageA(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)"PS/Xbox + Share/View");
+    SendMessageA(this->RemoteSlotChangeComboBox, CB_ADDSTRING, 0, (LPARAM)"PS/Xbox + L3/LS");
 
     // Device operational mode:
-    SendMessage(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Wheel Mode"));
-    SendMessage(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Standard Mode"));
-    SendMessage(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)_cw(L"Tournament Mode"));
+    SendMessageA(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)"Wheel Mode");
+    SendMessageA(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)"Standard Mode");
+    SendMessageA(this->OperationalModeComboBox, CB_ADDSTRING, 0, (LPARAM)"Tournament Mode");
 
     // Prepare sliders
     // 
@@ -984,9 +991,9 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     
     // Print greeting
     Timestamp();
-    InsertFormattedText(GRAY, _c("Welcome to Zen++ - Copyright (C) 2023 Swedemafia - version %d.%02d.\r\n"), VERSION_MAJOR, VERSION_MINOR);
+    InsertFormattedText(GRAY, "Welcome to Zen++ - Copyright (C) 2023 Swedemafia - version %d.%02d.\r\n", VERSION_MAJOR, VERSION_MINOR);
     Timestamp();
-    InsertFormattedText(GRAY, _c("An Asgard production (https://discord.gg/tGH7QxtPam).\r\n"));
+    InsertFormattedText(GRAY, "An Asgard production (https://discord.gg/tGH7QxtPam).\r\n");
 
     // Disable URLs due to HID path
     SendMessage(this->RichEditOutput, EM_AUTOURLDETECT, FALSE, 0);
@@ -1016,7 +1023,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     if (GetCurrentDirectoryA(MAX_PATH, CurrentDirectory)) {
 
         // Format directory with type of files we are looking for
-        wsprintfA(CurrentDirectory, _c("%s\\*.bin"), CurrentDirectory);
+        wsprintfA(CurrentDirectory, "%s\\*.bin", CurrentDirectory);
 
         WIN32_FIND_DATAA FindData;
         HANDLE FindFile = FindFirstFileA(CurrentDirectory, &FindData);
@@ -1031,7 +1038,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     }
     else {
         Timestamp();
-        InsertFormattedText(RED, _c("Failed to query list of files in the current directory!\r\n"));
+        InsertFormattedText(RED, "Failed to query list of files in the current directory!\r\n");
     }
 
     StatusDialog = new StatusDialogManager(this->Instance, DLG_STATUS);
@@ -1044,7 +1051,7 @@ INT_PTR MainDialogManager::OnInitDialog(WPARAM wParam, LPARAM lParam)
     CreateDirectoryA("SlotConfig", NULL);
 
     // Set window caption
-    SetWindowTextA(this->Handle, _c("Zen++ - Copyright (C) 2023 - Swedemafia"));
+    SetWindowTextA(this->Handle, "Zen++ - Copyright (C) 2023 - Swedemafia");
 
 	return TRUE;
 }
@@ -1070,7 +1077,7 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
             SendMessage(pnmhdr->hwndFrom, EM_GETTEXTRANGE, 0, (LPARAM)&tr);
 
             // Open it
-            ShellExecute(this->Handle, _cw(L"open"), LinkClicked, NULL, NULL, SW_SHOWNORMAL);
+            ShellExecute(this->Handle, L"open", LinkClicked, NULL, NULL, SW_SHOWNORMAL);
         }
         break;
 
@@ -1082,7 +1089,7 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
 
             // Build display buffer
             char Display[8] = "";
-            sprintf_s(Display, _c("%d%%"), SliderValue);
+            sprintf_s(Display, "%d%%", SliderValue);
 
             // Set label text
             SendDlgItemMessageA(this->Handle, LABEL_DS4_BRIGHTNESS_VALUE, WM_SETTEXT, 0, (LPARAM)Display);
@@ -1095,7 +1102,7 @@ INT_PTR MainDialogManager::OnNotify(WPARAM wParam, LPARAM lParam)
 
             // Build display buffer
             char Display[8] = "";
-            sprintf_s(Display, _c("%dms"), SliderValue);
+            sprintf_s(Display, "%dms", SliderValue);
 
             // Set label text
             SendDlgItemMessageA(this->Handle, LABEL_VM_SPEED_VALUE, WM_SETTEXT, 0, (LPARAM)Display);
@@ -1203,14 +1210,14 @@ void MainDialogManager::InsertFormattedText(COLORREF Color, const char* Format, 
 void MainDialogManager::Timestamp(void) {
     SYSTEMTIME SystemTime;
     GetLocalTime(&SystemTime);
-    InsertFormattedText(WHITE, _c("[%02i:%02i:%02i.%03i] "), SystemTime.wHour % 12, SystemTime.wMinute, SystemTime.wSecond, SystemTime.wMilliseconds);
+    InsertFormattedText(WHITE, "[%02i:%02i:%02i.%03i] ", SystemTime.wHour % 12, SystemTime.wMinute, SystemTime.wSecond, SystemTime.wMilliseconds);
 }
 
 void MainDialogManager::UpdateCaption(const char* Status)
 {
     char Output[512] = "";
 
-    wsprintfA(Output, _c("Zen++ - Copyright (C) 2023 Swedemafia - %s"), Status);
+    wsprintfA(Output, "Zen++ - Copyright (C) 2023 Swedemafia - %s", Status);
 
     // Set window caption
     SetWindowTextA(this->Handle, Output);

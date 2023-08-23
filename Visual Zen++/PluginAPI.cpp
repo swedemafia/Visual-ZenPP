@@ -8,7 +8,7 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 	// Attempt to load the plugin
 	if (Plugin.Handle) {
 
-		PluginInitProc SetInterfaceInformation = (PluginInitProc)GetProcAddress(Plugin.Handle, _c("SetInterfaceInformation"));
+		PluginInitProc SetInterfaceInformation = (PluginInitProc)GetProcAddress(Plugin.Handle, "SetInterfaceInformation");
 
 		if (!SetInterfaceInformation) {
 			FreeLibrary(Plugin.Handle);
@@ -36,8 +36,12 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 		Plugin.Information.GetReleaseTime = GetReleaseTime;
 		Plugin.Information.GetRumble = GetRumble;
 		Plugin.Information.GetPs5AdtData = GetPs5AdtData;
+		Plugin.Information.SetVal = SetVal;
 
 		// Device:
+		Plugin.Information.EnterApiMode = EnterApiMode;
+		Plugin.Information.ExitApiMode = ExitApiMode;
+		Plugin.Information.ForwardAllInputs = ForwardAllInputs;
 		Plugin.Information.GetConnectedConsole = GetConnectedConsole;
 		Plugin.Information.GetConnectedController = GetConnectedController;
 		Plugin.Information.GetCpuLoadValue = GetCpuLoadValue;
@@ -45,12 +49,12 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 		Plugin.Information.GetSlotValue = GetSlotValue;
 		Plugin.Information.GetTraceValue = GetTraceValue;
 		Plugin.Information.GetVmSpeedValue = GetVmSpeedValue;
-
+		Plugin.Information.SetIoStatus = SetIoStatus;
 
 		// Attempt to set plugin interface information
 		if (!SetInterfaceInformation(&Plugin.Information)) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Failed to set interface information for plugin!\r\n"));
+			MainDialog->InsertFormattedText(RED, "Failed to set interface information for plugin!\r\n");
 			return FALSE;
 		}
 
@@ -59,7 +63,7 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 
 		// Add to list and notify user
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully loaded plugin %s!\r\n"), File);
+		MainDialog->InsertFormattedText(GREEN, "Successfully loaded plugin %s!\r\n", PathFindFileNameA(File));
 		MainDialog->UpdatePluginMenu();
 
 		return TRUE;
@@ -67,7 +71,7 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 
 	// Unable to load library
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(RED, _c("Failed to load plugin %s!\r\n"), File);
+	MainDialog->InsertFormattedText(RED, "Failed to load plugin %s!\r\n", PathFindFileNameA(File));
 
 	return FALSE;
 }
@@ -75,10 +79,12 @@ BOOL PluginAPI::LoadPlugin(LPCSTR File)
 BOOL PluginAPI::UnloadPlugin(void)
 {
 
+	Plugin.Information.TerminateHook(Plugin.Information.HookParam);
+
 	// Attempt to unload the plugin
 	if (!FreeLibrary(Plugin.Handle)) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to unload plugin %s!\r\n"), Plugin.Name);
+		MainDialog->InsertFormattedText(RED, "Failed to unload plugin %s!\r\n", PathFindFileNameA(Plugin.Name));
 		return FALSE;
 	}
 
@@ -86,7 +92,7 @@ BOOL PluginAPI::UnloadPlugin(void)
 
 	// Remove from list and notify user
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GREEN, _c("Successfully unload plugin %s!\r\n"), Plugin.Name);
+	MainDialog->InsertFormattedText(GREEN, "Successfully unload plugin %s!\r\n", PathFindFileNameA(Plugin.Name));
 	MainDialog->UpdatePluginMenu();
 
 	// Update handle
@@ -185,7 +191,32 @@ BYTE WINAPI PluginAPI::GetPs5AdtData(CronusZen::Ps5AdtValue Value)
 	}
 }
 
+void WINAPI PluginAPI::SetVal(BYTE Identifier, BYTE Value)
+{
+	if ((Identifier >= 0) && (Identifier <= 37))
+		Cronus.Output[Identifier] = Value;
+}
+
 // Device:
+void WINAPI PluginAPI::EnterApiMode(void)
+{
+	CronusZen::EnterApiMode();
+	Cronus.ApiMode = TRUE; // Enable API mode
+}
+
+void WINAPI PluginAPI::ExitApiMode(void)
+{
+	Cronus.ApiMode = FALSE; // Disable API mode
+	CronusZen::ExitApiMode();
+}
+
+void WINAPI PluginAPI::ForwardAllInputs(void)
+{
+	for (unsigned i = 0; i < 38; i++) {
+		Cronus.Output[i] = Cronus.InputReport.Input[i];
+	}
+}
+
 CronusZen::ConsoleType WINAPI PluginAPI::GetConnectedConsole(void)
 {
 	return (CronusZen::ConsoleType)Cronus.InputReport.ConnectedConsole;
@@ -234,4 +265,9 @@ int WINAPI PluginAPI::GetTraceValue(CronusZen::TraceValue Value)
 BYTE WINAPI PluginAPI::GetVmSpeedValue(void)
 {
 	return Cronus.InputReport.VmSpeedValue;
+}
+
+void WINAPI PluginAPI::SetIoStatus(CronusZen::StreamIoStatusMask StatusMask)
+{
+	CronusZen::StreamIoStatus((BYTE)StatusMask);
 }

@@ -239,6 +239,7 @@ namespace CronusZen
 		BYTE FilePath[MAX_PATH];
 		BYTE FileName[MAX_PATH];
 		DWORD FileSize;
+		BOOL IsGamepack;
 	};
 
 	struct InputReportInformation {
@@ -296,6 +297,10 @@ namespace CronusZen
 		InputReportInformation InputReport;
 		OutputReportInformation OutputReport;
 
+		// API Mode information:
+		BOOL ApiMode;
+		BYTE Output[38];
+
 		// Last controller input/output report information
 		InputReportInformation LastInputReport;
 		OutputReportInformation LastOutputReport;
@@ -346,7 +351,9 @@ namespace CronusZen
 
 	// Send:
 	void RunScript(const char* Script);
+	void ApiMode(void);
 	void ResetDevice(void);
+	void EnterApiMode(void);
 	void ExitApiMode(void);
 	void UnloadGpc(void);
 	void ChangeSlotA(void);

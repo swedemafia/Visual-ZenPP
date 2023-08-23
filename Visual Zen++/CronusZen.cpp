@@ -16,20 +16,20 @@ void CronusZen::DisplaySlotsCfg(void)
 			UsedSlots++;
 			TotalBytes += Cronus.Slot[i].FileSize;
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(YELLOW, _c("Slot #%d: %s (%d bytes).\r\n"), i + 1, Cronus.Slot[i].FileName, Cronus.Slot[i].FileSize);
+			MainDialog->InsertFormattedText(YELLOW, "Slot #%d: %s (%d bytes).\r\n", i + 1, Cronus.Slot[i].FileName, Cronus.Slot[i].FileSize);
 		}
 	}
 
 	// Notify user if no slots are configured
 	if (!TotalBytes) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("No slot configuration data returned.\r\n"));
+		MainDialog->InsertFormattedText(YELLOW, "No slot configuration data returned.\r\n");
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("%d slot%sconfigured using %d bytes of flash memory.\r\n"), UsedSlots, UsedSlots == 1 ? " is " : "s ", TotalBytes);
+		MainDialog->InsertFormattedText(YELLOW, "%d slot%sconfigured using %d bytes of flash memory.\r\n", UsedSlots, UsedSlots == 1 ? " is " : "s ", TotalBytes);
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("%d%% flash memory used with %d bytes available.\r\n"), (unsigned int)((float)((float)TotalBytes / (float)262140) * 100), 262140 - TotalBytes);
+		MainDialog->InsertFormattedText(YELLOW, "%d%% flash memory used with %d bytes available.\r\n", (unsigned int)((float)((float)TotalBytes / (float)262140) * 100), 262140 - TotalBytes);
 	}
 }
 
@@ -48,7 +48,7 @@ void CronusZen::WriteFlashConfig(void)
 
 			if (Cronus.NumberOfPendingSlots - 1) {
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(YELLOW, _c("Advancing all pending slots forward a slot...\r\n"));
+				MainDialog->InsertFormattedText(YELLOW, "Advancing all pending slots forward a slot...\r\n");
 			}
 
 			// Move to next slot, increase number of errors, and reduce number of pending slots
@@ -83,7 +83,7 @@ void CronusZen::WriteFlashConfig(void)
 
 		// Notify user
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GRAY, _c("Requesting slots configuration...\r\n"));
+		MainDialog->InsertFormattedText(GRAY, "Requesting slots configuration...\r\n");
 
 		// Required delay
 		Sleep(3000);
@@ -103,7 +103,7 @@ void CronusZen::OnInputReport(void)
 
 		// Notify user of success
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully erased slots on the device!\r\n"));
+		MainDialog->InsertFormattedText(GREEN, "Successfully erased slots on the device!\r\n");
 
 		// Reset connection state
 		Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -113,7 +113,7 @@ void CronusZen::OnInputReport(void)
 
 		// Notify user of success
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully cleared registered Bluetooth devices!\r\n"));
+		MainDialog->InsertFormattedText(GREEN, "Successfully cleared registered Bluetooth devices!\r\n");
 
 		// Reset connection state
 		Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -123,8 +123,18 @@ void CronusZen::OnInputReport(void)
 
 		//memcpy(&Cronus.LastInputReport, &Cronus.InputReport, sizeof(InputReportInformation));
 
-		// Extract CPU and SlotValue
-		Cronus.InputReport.CpuLoadValue = Parse->ExtractShort();
+		// Process CPU load
+		WORD CPULoad = Parse->ExtractShort();
+
+		if (Cronus.InputReport.CpuLoadValue != CPULoad) {
+			char CPULoadDisplay[24] = { 0 };
+			wsprintfA(CPULoadDisplay, "CPU: %d%% @ %dms", CPULoad, Cronus.InputReport.VmSpeedValue);
+			SetWindowTextA(MainDialog->CPUUsageLabel, CPULoadDisplay);
+		}
+
+		Cronus.InputReport.CpuLoadValue = CPULoad;
+
+		// Extract current slot
 		Cronus.InputReport.SlotValue = Parse->ExtractByte();
 
 		if (Cronus.CurrentSlot != Cronus.InputReport.SlotValue) {
@@ -132,7 +142,11 @@ void CronusZen::OnInputReport(void)
 			// Update display label
 			char Buffer[32] = "";
 
-			wsprintfA(Buffer, _c("Current slot: %d"), Cronus.InputReport.SlotValue);
+			if (Cronus.InputReport.SlotValue)
+				wsprintfA(Buffer, "Current slot: %d", Cronus.InputReport.SlotValue);
+			else
+				wsprintfA(Buffer, "No slot loaded");
+
 			SetWindowTextA(MainDialog->CurrentSlotLabel, (LPCSTR)Buffer);
 
 			if (!Cronus.InputReport.SlotValue) {
@@ -143,11 +157,11 @@ void CronusZen::OnInputReport(void)
 					// Notify user
 					if (Cronus.CurrentSlot != 10) {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully cycled slots and unloaded %s!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
+						MainDialog->InsertFormattedText(GREEN, "Successfully cycled slots and unloaded %s!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
 					} 
 					else {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully stopped and unloaded %s!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
+						MainDialog->InsertFormattedText(GREEN, "Successfully stopped and unloaded %s!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
 					}
 
 					// Update connection status
@@ -159,11 +173,11 @@ void CronusZen::OnInputReport(void)
 					// Notify user
 					if (Cronus.CurrentSlot != 10) {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully unloaded %s (slot #%d)!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName, Cronus.CurrentSlot);
+						MainDialog->InsertFormattedText(GREEN, "Successfully unloaded %s (slot #%d)!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName, Cronus.CurrentSlot);
 					} 
 					else {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully stopped and unloaded %s!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
+						MainDialog->InsertFormattedText(GREEN, "Successfully stopped and unloaded %s!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
 					}
 
 					// Update connection status
@@ -173,14 +187,14 @@ void CronusZen::OnInputReport(void)
 					// GPC unloaded
 					if (Cronus.CurrentSlot != 10) {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(YELLOW, _c("%s from slot #%d has been unloaded!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName, Cronus.CurrentSlot);
+						MainDialog->InsertFormattedText(YELLOW, "%s from slot #%d has been unloaded!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName, Cronus.CurrentSlot);
 					}
 					else {
 
 						// Sometimes the device will report back on bootup so we must check to make sure it's worth reporting
 						if (strlen((const char*)Cronus.Slot[Cronus.CurrentSlot - 1].FileName)) {
 							MainDialog->Timestamp();
-							MainDialog->InsertFormattedText(GREEN, _c("Successfully terminated the execution of %s!\r\n"), Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
+							MainDialog->InsertFormattedText(GREEN, "Successfully terminated the execution of %s!\r\n", Cronus.Slot[Cronus.CurrentSlot - 1].FileName);
 						}
 
 					}
@@ -198,7 +212,7 @@ void CronusZen::OnInputReport(void)
 					if (strlen((const char*)Cronus.Slot[9].FileName)) {
 						// Notify user
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully loaded and executed %s!\r\n"), Cronus.Slot[9].FileName);
+						MainDialog->InsertFormattedText(GREEN, "Successfully loaded and executed %s!\r\n", Cronus.Slot[9].FileName);
 
 						if (Connection.State == Communication::Connection_RunScript) {
 							// Reset connection state
@@ -214,14 +228,14 @@ void CronusZen::OnInputReport(void)
 
 						// Notify user
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(GREEN, _c("Successfully loaded %s from slot #%d!\r\n"), Cronus.Slot[Cronus.CurrentSlot].FileName, Cronus.CurrentSlot + 1);
+						MainDialog->InsertFormattedText(GREEN, "Successfully loaded %s from slot #%d!\r\n", Cronus.Slot[Cronus.CurrentSlot].FileName, Cronus.CurrentSlot + 1);
 
 						// Update connection status
 						Communication::UpdateConnectionState(Communication::Connection_Connected);
 					}
 					else {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(YELLOW, _c("%s from slot #%d is now loaded!\r\n"), Cronus.Slot[Cronus.CurrentSlot].FileName, Cronus.CurrentSlot + 1);
+						MainDialog->InsertFormattedText(YELLOW, "%s from slot #%d is now loaded!\r\n", Cronus.Slot[Cronus.CurrentSlot].FileName, Cronus.CurrentSlot + 1);
 					}
 
 				}
@@ -280,6 +294,9 @@ void CronusZen::OnInputReport(void)
 		if (Cronus.InputReport.VmSpeedValue != Cronus.VMSpeedValue) {
 
 			if (Cronus.InputReport.VmSpeedValue) {
+				char VMSpeedDisplay[24] = { 0 };
+				wsprintfA(VMSpeedDisplay, "CPU: %d%% @ %dms", CPULoad, Cronus.InputReport.VmSpeedValue);
+				SetWindowTextA(MainDialog->CPUUsageLabel, VMSpeedDisplay);
 				ChangeVMSpeedValue(Cronus.InputReport.VmSpeedValue);
 			}
 
@@ -308,6 +325,11 @@ void CronusZen::OnOutputReport(void)
 	Parse->Advance(1);
 
 	Cronus.OutputReport.CfgState = Parse->ExtractByte();
+
+	// Check for API mode
+	if (Cronus.ApiMode) {
+		CronusZen::ApiMode(); // Send API mode data
+	}
 }
 
 void CronusZen::OnPs5AdtReport(void)
@@ -341,7 +363,7 @@ void CronusZen::OnGetStatus(void)
 
 			// Notify user of success
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GREEN, _c("Successfully flashed config for %s to slot #%d!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
+			MainDialog->InsertFormattedText(GREEN, "Successfully flashed config for %s to slot #%d!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
 
 			// Attempt to flash gamepack, if not, move to next file
 			if (!FlashGamepack())
@@ -349,7 +371,7 @@ void CronusZen::OnGetStatus(void)
 		}
 		else {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Failed flashing config for %s to slot #%d!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
+			MainDialog->InsertFormattedText(RED, "Failed flashing config for %s to slot #%d!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
 			WriteFlashConfig();
 		}
 
@@ -361,14 +383,14 @@ void CronusZen::OnGetStatus(void)
 
 			// Notify user of success
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GREEN, _c("Successfully flashed %s to slot #%d!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
+			MainDialog->InsertFormattedText(GREEN, "Successfully flashed %s to slot #%d!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
 
 		}
 		else {
 
 			// Notify user of failure
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Failed flashing %s to slot #%d!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
+			MainDialog->InsertFormattedText(RED, "Failed flashing %s to slot #%d!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, Cronus.SlotToWrite - Cronus.NumberOfErrorSlots + 1);
 		}
 
 		// Move to next slot
@@ -396,7 +418,7 @@ void CronusZen::OnRequestAttachedDevices(void)
 
 		// Notify user
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GRAY, _c("Requesting slots configuration...\r\n"));
+		MainDialog->InsertFormattedText(GRAY, "Requesting slots configuration...\r\n");
 
 		ReadSlotsCfg();
 	}
@@ -411,7 +433,7 @@ void CronusZen::OnRequestMkFile(void)
 
 		// Notify user of success
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully factory reset the device!\r\n"));
+		MainDialog->InsertFormattedText(GREEN, "Successfully factory reset the device!\r\n");
 
 		// Reset connection state
 		Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -436,21 +458,22 @@ void CronusZen::OnGetFw(void)
 	Cronus.Checksum[3] = Parse->ExtractByte();
 
 	// Notify user of firmware
-	if (!_stricmp((const char*)Cronus.FirmwareVersion, _c("2.1.0-beta.68"))) {
+	if (!_stricmp((const char*)Cronus.FirmwareVersion, "2.1.0-beta.68")) {
 		Cronus.CommunicationVersion = CronusZen::Communication_New;
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Using latest supported firmware: %s.\r\n"), Cronus.FirmwareVersion);
+		MainDialog->InsertFormattedText(GREEN, "Using latest supported firmware: %s.\r\n", Cronus.FirmwareVersion);
 	}
-	else if (!_stricmp((const char*)Cronus.FirmwareVersion, _c("2.1.0-beta.50"))) {
+	else if (!_stricmp((const char*)Cronus.FirmwareVersion, "2.1.0-beta.50")) {
 		Cronus.CommunicationVersion = CronusZen::Communication_Old;
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Using supported firmware: %s.\r\n"), Cronus.FirmwareVersion);
+		MainDialog->InsertFormattedText(GREEN, "Using supported firmware: %s.\r\n", Cronus.FirmwareVersion);
 	}
 	else {
 		Cronus.CommunicationVersion = CronusZen::Communication_Old;
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(PURPLE, _c("Using unsupported firmware: %s.\r\n"), Cronus.FirmwareVersion);
-		MainDialog->InsertFormattedText(RED, _c("Please upgrade your device to firmware 2.1.0-beta.50 or 2.1.0-beta.68!\r\n"), Cronus.FirmwareVersion);
+		MainDialog->InsertFormattedText(PURPLE, "Using unsupported firmware: %s.\r\n", Cronus.FirmwareVersion);
+		MainDialog->Timestamp();
+		MainDialog->InsertFormattedText(RED, "Please upgrade your device to firmware 2.1.0-beta.50 or 2.1.0-beta.68!\r\n");
 	}
 
 	// Request serial number (only if we are in the initial connection process)
@@ -517,7 +540,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Got unexpected DS4 lightbar brightness value: %d (expected 0 to 100)!\r\n"), Cronus.Ds4LightbarBrightness);
+		MainDialog->InsertFormattedText(RED, "Got unexpected DS4 lightbar brightness value: %d (expected 0 to 100)!\r\n", Cronus.Ds4LightbarBrightness);
 	}
 
 	// Print device operational mode
@@ -526,7 +549,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Got unexpected operational mode value: %d (expected 0 to 2)!\r\n"), Cronus.DeviceMode);
+		MainDialog->InsertFormattedText(RED, "Got unexpected operational mode value: %d (expected 0 to 2)!\r\n", Cronus.DeviceMode);
 	}
 
 	// Print device emulator output protocol
@@ -535,7 +558,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Got unexpected emulator output protocol value: %d (expected 0 to 5)!\r\n"), Cronus.EmulatorOutputProtocol);
+		MainDialog->InsertFormattedText(RED, "Got unexpected emulator output protocol value: %d (expected 0 to 5)!\r\n", Cronus.EmulatorOutputProtocol);
 	}
 
 	// Print remote slot change configuration
@@ -544,7 +567,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Got unexpected remote slot change value: %d (expected 0 to 2)!\r\n"), Cronus.RemoteSlotChange);
+		MainDialog->InsertFormattedText(RED, "Got unexpected remote slot change value: %d (expected 0 to 2)!\r\n", Cronus.RemoteSlotChange);
 	}
 
 	// Print PS4 Speciality status
@@ -553,7 +576,7 @@ void CronusZen::OnFragmentRead(void)
 		// Only prompt user if it is enabled
 		if (Cronus.Ps4Speciality) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GREEN, _c("Device is using PS4 Speciality!\r\n"));
+			MainDialog->InsertFormattedText(GREEN, "Device is using PS4 Speciality!\r\n");
 		}
 
 		SendMessage(MainDialog->PS4SpecialityRadio, BM_SETCHECK, (Cronus.Ps4Speciality) ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -561,7 +584,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Got unexpected PS4 Speciality value: %d (expected 0 or 1)!\r\n"), Cronus.Ps4Speciality);
+		MainDialog->InsertFormattedText(RED, "Got unexpected PS4 Speciality value: %d (expected 0 or 1)!\r\n", Cronus.Ps4Speciality);
 		SendMessage(MainDialog->PS4SpecialityRadio, BM_SETCHECK, BST_UNCHECKED, 0);
 		CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_PS4SPECIALITY, MF_UNCHECKED);
 	}
@@ -572,7 +595,7 @@ void CronusZen::OnFragmentRead(void)
 		// Only prompt user if it is enabled
 		if (Cronus.RemotePlay) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GREEN, _c("Device is using PlayStation Remote Play!\r\n"));
+			MainDialog->InsertFormattedText(GREEN, "Device is using PlayStation Remote Play!\r\n");
 		}
 
 		SendMessage(MainDialog->RemotePlayRadio, BM_SETCHECK, (Cronus.RemotePlay) ? BST_CHECKED : BST_UNCHECKED, 0);
@@ -580,7 +603,7 @@ void CronusZen::OnFragmentRead(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(YELLOW, _c("Got unexpected Remote Play value: %d (expected 0 or 1)!\r\n"), Cronus.RemotePlay);
+		MainDialog->InsertFormattedText(RED, "Got unexpected Remote Play value: %d (expected 0 or 1)!\r\n", Cronus.RemotePlay);
 		SendMessage(MainDialog->RemotePlayRadio, BM_SETCHECK, BST_CHECKED, 0);
 		CheckMenuItem(MainDialog->MainMenu, MENU_DEVICE_REMOTE_PLAY, MF_UNCHECKED);
 	}
@@ -598,7 +621,7 @@ void CronusZen::OnReadSlotsCfg(void)
 		Communication::UpdateConnectionState(Communication::Connection_Connected);
 
 		// Update current slot label
-		SetWindowTextA(MainDialog->CurrentSlotLabel, _c("Current slot: 0"));
+		SetWindowTextA(MainDialog->CurrentSlotLabel, "No slot loaded");
 	}
 
 	// Reset current slot configuration
@@ -666,7 +689,7 @@ void CronusZen::OnReadSlotsCfg(void)
 			SetWindowTextA(GetDlgItem(MainDialog->Handle, LABEL_SLOT_1 + i), (LPCSTR)Cronus.Slot[i].FileName);
 
 			char SlotConfigFileName[MAX_PATH] = "";
-			wsprintfA(SlotConfigFileName, _c("SlotConfig//%i.dat"), i);
+			wsprintfA(SlotConfigFileName, "SlotConfig//%i.dat", i);
 
 			// Set SlotConfig file
 			HANDLE SlotConfigFile = CreateFileA(SlotConfigFileName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, 0, NULL);
@@ -681,12 +704,12 @@ void CronusZen::OnReadSlotsCfg(void)
 				// Attempt to dump data
 				if (!WriteFile(SlotConfigFile, OutputData, sizeof(OutputData), &BytesWritten, NULL)) {
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(RED, _c("Failed to write slot config file for %s! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
+					MainDialog->InsertFormattedText(RED, "Failed to write slot config file for %s! (error: %d)\r\n", Cronus.Slot[i].FileName, GetLastError());
 				}
 				else {
 					if (BytesWritten != sizeof(OutputData)) {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(RED, _c("Writing slot config file for %s returned bytes written mismatch!\r\n"), Cronus.Slot[i].FileName);
+						MainDialog->InsertFormattedText(RED, "Writing slot config file for %s returned bytes written mismatch!\r\n", Cronus.Slot[i].FileName);
 					}
 				}
 
@@ -695,7 +718,7 @@ void CronusZen::OnReadSlotsCfg(void)
 			}
 			else {
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(RED, _c("Failed to create slot config file for %s! (error: %d)\r\n"), Cronus.Slot[i].FileName, GetLastError());
+				MainDialog->InsertFormattedText(RED, "Failed to create slot config file for %s! (error: %d)\r\n", Cronus.Slot[i].FileName, GetLastError());
 			}
 		}
 	}
@@ -707,7 +730,7 @@ void CronusZen::OnReadSlotsCfg(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GRAY, _c("Cleaning up device slots; please wait...\r\n"));
+		MainDialog->InsertFormattedText(GRAY, "Cleaning up device slots; please wait...\r\n");
 		CronusZen::DeviceCleanup();
 		Sleep(5500);
 
@@ -729,7 +752,7 @@ void CronusZen::OnReadSlotsCfg(void)
 
 			// Notify user
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GRAY, _c("Warning: not all scripts will be able to be written to the device!  Maximum flash memory usage exceeded!\r\n"));
+			MainDialog->InsertFormattedText(GRAY, "Warning: not all scripts will be able to be written to the device!  Maximum flash memory usage exceeded!\r\n");
 
 			unsigned int ByteCounter = 0;
 
@@ -742,7 +765,7 @@ void CronusZen::OnReadSlotsCfg(void)
 
 					if (Cronus.Slot[i].FileSize) {
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(RED, _c("Unable to write %s to slot #%d!\r\n"), Cronus.Slot[i].FileName, i + 1);
+						MainDialog->InsertFormattedText(RED, "Unable to write %s to slot #%d!\r\n", Cronus.Slot[i].FileName, i + 1);
 						TotalBytes -= Cronus.Slot[i].FileSize;
 						TotalSlots--;
 						Cronus.NumberOfPendingSlots--;
@@ -768,7 +791,7 @@ void CronusZen::ReadByteCodes(void)
 		// See if slot needs to be read
 		if (Cronus.ReadByteCode[Cronus.SlotToRead]) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GRAY, _c("Requesting byte code for %s...\r\n"), Cronus.Slot[Cronus.SlotToRead].FileName);
+			MainDialog->InsertFormattedText(GRAY, "Requesting byte code for %s...\r\n", Cronus.Slot[Cronus.SlotToRead].FileName);
 			CronusZen::ReadByteCode(Cronus.SlotToRead);
 		}
 		else {
@@ -795,7 +818,7 @@ void CronusZen::OnReadByteCode(void)
 
 		if (FileHandle == INVALID_HANDLE_VALUE) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Downloaded byte code but failed to create new file %s! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToRead].FileName, GetLastError());
+			MainDialog->InsertFormattedText(RED, "Downloaded byte code but failed to create new file %s! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToRead].FileName, GetLastError());
 		}
 		else {
 
@@ -804,14 +827,14 @@ void CronusZen::OnReadByteCode(void)
 			// Attempt to write the file
 			if (!WriteFile(FileHandle, Parse->Buffer() + 4, Cronus.Slot[Cronus.SlotToRead].FileSize, &BytesWritten, NULL)) {
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(RED, _c("Downloaded byte code but failed to write byte code to file %s! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToRead].FileName, GetLastError());
+				MainDialog->InsertFormattedText(RED, "Downloaded byte code but failed to write byte code to file %s! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToRead].FileName, GetLastError());
 			}
 
 			// Check bytes written
 			if (BytesWritten == Cronus.Slot[Cronus.SlotToRead].FileSize) {
 				// Notify user
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(GREEN, _c("Successfully downloaded slot #%d and saved as %s!\r\n"), Cronus.SlotToRead + 1, Cronus.Slot[Cronus.SlotToRead].FileName);
+				MainDialog->InsertFormattedText(GREEN, "Successfully downloaded slot #%d and saved as %s!\r\n", Cronus.SlotToRead + 1, Cronus.Slot[Cronus.SlotToRead].FileName);
 			}
 
 			// Close file
@@ -832,7 +855,7 @@ void CronusZen::OnReadByteCode(void)
 	}
 	else {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Gamepacks are not able to be downloaded from the device!\r\n"));
+		MainDialog->InsertFormattedText(RED, "Gamepacks are not able to be downloaded from the device!\r\n");
 	}
 }
 
@@ -840,7 +863,7 @@ void CronusZen::DispatchMessageHook(BYTE PacketID, WORD PayloadSize, BYTE* Paylo
 {
 	// Notify plugins
 	if (Plugin.Handle) {
-		Plugin.Information.MessageHook(PacketID, PayloadSize, Payload, Plugin.Information.HookParam);
+		//Plugin.Information.MessageHook(PacketID, PayloadSize, Payload, Plugin.Information.HookParam);
 	}
 }
 
@@ -949,7 +972,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 			// Prompt user status
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Clearing registered Bluetooth devices failed; the device did not respond within the expected timeframe!\r\n"));
+			MainDialog->InsertFormattedText(RED, "Clearing registered Bluetooth devices failed; the device did not respond within the expected timeframe!\r\n");
 
 			// Reset state back to connected
 			Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -980,7 +1003,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 			// Prompt user status
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Erase slots failed; the device did not respond within the expected timeframe!\r\n"));
+			MainDialog->InsertFormattedText(RED, "Erase slots failed; the device did not respond within the expected timeframe!\r\n");
 
 			// Reset state back to connected
 			Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -1022,7 +1045,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 			// Prompt user status
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Factory reset failed; the device did not respond within the expected timeframe!\r\n"));
+			MainDialog->InsertFormattedText(RED, "Factory reset failed; the device did not respond within the expected timeframe!\r\n");
 
 			// Reset state back to connected
 			Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -1076,13 +1099,13 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 		// Notify user of status
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully %s PS4 Speciality!\r\n"), (Cronus.Ps4Speciality == CronusZen::Ps4Speciality_Enabled) ? "enabled" : "disabled");
+		MainDialog->InsertFormattedText(GREEN, "Successfully %s PS4 Speciality!\r\n", (Cronus.Ps4Speciality == CronusZen::Ps4Speciality_Enabled) ? "enabled" : "disabled");
 		CronusZen::StreamIoStatus(CronusZen::Off);
 		Sleep(15);
 
 		// Notify user of status
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GRAY, _c("Attempting to reset the device...\r\n"));
+		MainDialog->InsertFormattedText(GRAY, "Attempting to reset the device...\r\n");
 
 		// Update connection state and perform reset
 		Communication::UpdateConnectionState(Communication::Connection_ResetDevice);
@@ -1122,13 +1145,13 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 		// Notify user of status
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GREEN, _c("Successfully %s Remote Play!\r\n"), (Cronus.RemotePlay) ? "enabled" : "disabled");
+		MainDialog->InsertFormattedText(GREEN, "Successfully %s Remote Play!\r\n", (Cronus.RemotePlay) ? "enabled" : "disabled");
 		CronusZen::StreamIoStatus(CronusZen::Off);
 		Sleep(15);
 
 		// Notify user of status
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(GRAY, _c("Attempting to reset the device...\r\n"));
+		MainDialog->InsertFormattedText(GRAY, "Attempting to reset the device...\r\n");
 
 		// Update connection state and perform reset
 		Communication::UpdateConnectionState(Communication::Connection_ResetDevice);
@@ -1164,7 +1187,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 		CronusZen::StreamIoStatus(CronusZen::Off);
 		Sleep(100);
 
-		CronusZen::RunScript((const char*)Cronus.Slot[9].FileName);
+		CronusZen::RunScript((const char*)Cronus.Slot[9].FilePath);
 
 		// Check if we received a response back
 		Sleep(1000);
@@ -1174,7 +1197,7 @@ DWORD CronusZen::ThreadProc(Communication::ConnectionState Parameter)
 
 			// Prompt user status
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Run script failed failed; the device did not respond within the expected timeframe!\r\n"));
+			MainDialog->InsertFormattedText(RED, "Run script failed failed; the device did not respond within the expected timeframe!\r\n");
 
 			// Reset state back to connected
 			Communication::UpdateConnectionState(Communication::Connection_Connected);
@@ -1205,7 +1228,7 @@ void CronusZen::RunScript(const char* Script)
 	// Check if file was opened
 	if (ScriptFile == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to open script %s! (error: %d)\r\n"), Script, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Failed to open script %s! (error: %d)\r\n", PathFindFileNameA(Script), GetLastError());
 		return;
 	}
 
@@ -1215,21 +1238,21 @@ void CronusZen::RunScript(const char* Script)
 	// Check if file size was returned
 	if (FileSize == INVALID_FILE_SIZE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to query file size of %s! (error: %d)\r\n"), Script, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Failed to query file size of %s! (error: %d)\r\n", PathFindFileNameA(Script), GetLastError());
 		CloseHandle(ScriptFile);
 		return;
 	}
 
 	// Notify user of status
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GREEN, _c("Successfully opened script %s!\r\n"), Script);
+	MainDialog->InsertFormattedText(GREEN, "Successfully opened script %s!\r\n", PathFindFileNameA(Script));
 
 	BYTE* FileData = new BYTE[FileSize]{ 0 };
 
 	// Check if memory was successfully allocated
 	if (!FileData) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to allocate %d bytes of memory while reading the script file!\r\n"), FileSize);
+		MainDialog->InsertFormattedText(RED, "Failed to allocate %d bytes of memory while reading the script file!\r\n", FileSize);
 		CloseHandle(ScriptFile);
 		return;
 	}
@@ -1239,7 +1262,7 @@ void CronusZen::RunScript(const char* Script)
 	// Attempt to read file data
 	if (!ReadFile(ScriptFile, FileData, FileSize, &BytesRead, NULL)) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to read file data from %s! (error: %d)\r\n"), Script, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Failed to read file data from %s! (error: %d)\r\n", PathFindFileNameA(Script), GetLastError());
 		CloseHandle(ScriptFile);
 		delete[] FileData;
 		return;
@@ -1248,7 +1271,7 @@ void CronusZen::RunScript(const char* Script)
 	// Check bytes read versus file size
 	if (BytesRead != FileSize) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to read file data from %s (read %d bytes, expected %d bytes)!\r\n"), Script, BytesRead, FileSize);
+		MainDialog->InsertFormattedText(RED, "Failed to read file data from %s (read %d bytes, expected %d bytes)!\r\n", PathFindFileNameA(Script), BytesRead, FileSize);
 		CloseHandle(ScriptFile);
 		delete[] FileData;
 		return;
@@ -1259,7 +1282,7 @@ void CronusZen::RunScript(const char* Script)
 
 	// Notify user of the status
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GRAY, _c("Initiating transfer of %d bytes of data...\r\n"), FileSize);
+	MainDialog->InsertFormattedText(GRAY, "Initiating transfer of %d bytes of data...\r\n", FileSize);
 
 	// Pause IoStream
 	StreamIoStatus(Off);
@@ -1311,7 +1334,7 @@ void CronusZen::RunScript(const char* Script)
 
 	// Notify user
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(YELLOW, _c("Uploaded game pack to flash memory; waiting for response...\r\n"), BytesSent);
+	MainDialog->InsertFormattedText(YELLOW, "Uploaded script to flash memory; waiting for response...\r\n", BytesSent);
 
 	// Close file
 	CloseHandle(ScriptFile);
@@ -1323,6 +1346,19 @@ void CronusZen::RunScript(const char* Script)
 	StreamIoStatus(InputReport | OutputReport | ((Cronus.InputReport.ConnectedController == Controller_Ps5) ? Ps5Adt : 0));
 }
 
+void CronusZen::ApiMode(void)
+{
+	Communication::OutgoingPacket ApiMode(PKT_APIMODE);
+
+	// Insert data
+	for (unsigned i = 0; i < 38; i++) {
+		ApiMode.InsertByte(Cronus.Output[i]);
+		Cronus.Output[i] = 0; // Reset value
+	}
+
+	ApiMode.Finalize(ApiMode.Size(), 1);
+}
+
 void CronusZen::ResetDevice(void)
 {
 	Communication::OutgoingPacket ResetDevice(PKT_RESETDEVICE);
@@ -1330,11 +1366,23 @@ void CronusZen::ResetDevice(void)
 	ResetDevice.Finalize(0, 1);
 }
 
+void CronusZen::EnterApiMode(void)
+{
+	Communication::OutgoingPacket EnterApiMode(PKT_ENTERAPIMODE);
+
+	EnterApiMode.Finalize(0, 1);
+}
+
 void CronusZen::ExitApiMode(void)
 {
 	Communication::OutgoingPacket ExitApiMode(PKT_EXITAPIMODE);
 
 	ExitApiMode.Finalize(0, 1);
+
+	if (Connection.State != Communication::Connection_Connecting) {
+		// Submit IoStream request
+		StreamIoStatus(InputReport | OutputReport | ((Cronus.InputReport.ConnectedController == Controller_Ps5) ? Ps5Adt : 0));
+	}
 }
 
 void CronusZen::UnloadGpc(void)
@@ -1372,7 +1420,6 @@ void CronusZen::ClearBtCommand(void)
 
 	ClearBtCommand.Finalize(0, 1);
 }
-
 
 void CronusZen::GetStatus(void)
 {
@@ -1476,7 +1523,7 @@ BOOL CronusZen::FlashGamepack(void)
 	// Validate the file is able to be read
 	if (FileHandle == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unable to open %s for flashing gamepack on slot #%d! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Unable to open %s for flashing gamepack on slot #%d! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
 		return FALSE;
 	}
 
@@ -1485,7 +1532,7 @@ BOOL CronusZen::FlashGamepack(void)
 	// Validate the file size
 	if (FileSize == INVALID_FILE_SIZE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unable to query file size from %s for flashing gamepack on slot #%d! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Unable to query file size from %s for flashing gamepack on slot #%d! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
 		CloseHandle(FileHandle);
 		return FALSE;
 	}
@@ -1495,14 +1542,14 @@ BOOL CronusZen::FlashGamepack(void)
 
 	if (FileData == nullptr) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to allocate a read buffer when flashing gamepack on slot #%d!\r\n"), SlotToFlash + 1);
+		MainDialog->InsertFormattedText(RED, "Failed to allocate a read buffer when flashing gamepack on slot #%d!\r\n", SlotToFlash + 1);
 		delete[] FileData;
 		return FALSE;
 	}
 
 	if (!ReadFile(FileHandle, FileData, FileSize, &BytesRead, NULL)) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unable to read file data from %s for flashing gamepack on slot #%d! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Unable to read file data from %s for flashing gamepack on slot #%d! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
 		CloseHandle(FileHandle);
 		delete[] FileData;
 		return FALSE;
@@ -1513,7 +1560,7 @@ BOOL CronusZen::FlashGamepack(void)
 
 	if (BytesRead != FileSize) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unexpected number of bytes read when flashing gamepack on slot #%d (got %d bytes, expected %d bytes)!\r\n"), SlotToFlash + 1, BytesRead, FileSize);
+		MainDialog->InsertFormattedText(RED, "Unexpected number of bytes read when flashing gamepack on slot #%d (got %d bytes, expected %d bytes)!\r\n", SlotToFlash + 1, BytesRead, FileSize);
 		delete[] FileData;
 		return FALSE;
 	}
@@ -1522,7 +1569,7 @@ BOOL CronusZen::FlashGamepack(void)
 
 	if (LastData == nullptr) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Failed to allocate a buffer for last sent data when flashing gamepack on slot #%d!\r\n"), SlotToFlash + 1);
+		MainDialog->InsertFormattedText(RED, "Failed to allocate a buffer for last sent data when flashing gamepack on slot #%d!\r\n", SlotToFlash + 1);
 		delete[] FileData;
 		return FALSE;
 	}
@@ -1531,7 +1578,7 @@ BOOL CronusZen::FlashGamepack(void)
 	unsigned short PreviousPercentage = 0;
 
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GRAY, _c("Attempting to write %s to slot #%d...\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1);
+	MainDialog->InsertFormattedText(GRAY, "Attempting to write %s to slot #%d...\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1);
 	MainDialog->StatusDialog->SetSlotBytes(Cronus.SlotToWrite + 1, (float)FileSize);
 
 	while (BytesSent != FileSize) {
@@ -1616,7 +1663,7 @@ BOOL CronusZen::FlashConfig(void)
 	// Validate the file is able to be read
 	if (FileHandle == INVALID_HANDLE_VALUE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unable to open %s for flashing slot config on slot #%d! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Unable to open %s for flashing slot config on slot #%d! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
 		return FALSE;
 	}
 
@@ -1625,7 +1672,7 @@ BOOL CronusZen::FlashConfig(void)
 	// Validate the file size
 	if (FileSize == INVALID_FILE_SIZE) {
 		MainDialog->Timestamp();
-		MainDialog->InsertFormattedText(RED, _c("Unable to query file size from %s for flashing slot config on slot #%d! (error: %d)\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
+		MainDialog->InsertFormattedText(RED, "Unable to query file size from %s for flashing slot config on slot #%d! (error: %d)\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName, SlotToFlash + 1, GetLastError());
 		CloseHandle(FileHandle);
 		return FALSE;
 	}
@@ -1635,14 +1682,14 @@ BOOL CronusZen::FlashConfig(void)
 
 	// Notify user
 	MainDialog->Timestamp();
-	MainDialog->InsertFormattedText(GRAY, _c("Attempting to flash config for slot #%d...\r\n"), SlotToFlash + 1);
+	MainDialog->InsertFormattedText(GRAY, "Attempting to flash config for slot #%d...\r\n", SlotToFlash + 1);
 
 	// Set file size for the pending write
 	Cronus.Slot[Cronus.SlotToWrite].FileSize = FileSize;
 
 	// Read SlotConfig file
 	char SlotConfigFileName[MAX_PATH] = "";
-	wsprintfA(SlotConfigFileName, _c("SlotConfig//%d.dat"), Cronus.SlotToWrite);
+	wsprintfA(SlotConfigFileName, "SlotConfig//%d.dat", Cronus.SlotToWrite);
 
 	// Set SlotConfig file
 	HANDLE SlotConfigFile = CreateFileA(SlotConfigFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -1662,9 +1709,9 @@ BOOL CronusZen::FlashConfig(void)
 
 			// Notify user
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Error querying file size for slot config file %d.dat! (error: %d)\r\n"), Cronus.SlotToWrite, GetLastError());
+			MainDialog->InsertFormattedText(RED, "Error querying file size for slot config file %d.dat! (error: %d)\r\n", Cronus.SlotToWrite, GetLastError());
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(GRAY, _c("Sending blank configuration data...\r\n"));
+			MainDialog->InsertFormattedText(GRAY, "Sending blank configuration data...\r\n");
 
 			FailedToRead = TRUE;
 
@@ -1679,9 +1726,9 @@ BOOL CronusZen::FlashConfig(void)
 
 				// Notify user
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(RED, _c("Error reading slot config file %d.dat! (error: %d)\r\n"), Cronus.SlotToWrite, GetLastError());
+				MainDialog->InsertFormattedText(RED, "Error reading slot config file %d.dat! (error: %d)\r\n", Cronus.SlotToWrite, GetLastError());
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(GRAY, _c("Sending blank configuration data...\r\n"));
+				MainDialog->InsertFormattedText(GRAY, "Sending blank configuration data...\r\n");
 
 				FailedToRead = TRUE;
 
@@ -1693,9 +1740,9 @@ BOOL CronusZen::FlashConfig(void)
 
 					// Notify user
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(RED, _c("Read slot config file %d.dat but the file size is a mismatch!\r\n"), Cronus.SlotToWrite);
+					MainDialog->InsertFormattedText(RED, "Read slot config file %d.dat but the file size is a mismatch!\r\n", Cronus.SlotToWrite);
 					MainDialog->Timestamp();
-					MainDialog->InsertFormattedText(GRAY, _c("Sending blank configuration data...\r\n"));
+					MainDialog->InsertFormattedText(GRAY, "Sending blank configuration data...\r\n");
 
 					FailedToRead = TRUE;
 
@@ -1713,7 +1760,7 @@ BOOL CronusZen::FlashConfig(void)
 						BYTE CopyData[32] = { 0 };
 
 						MainDialog->Timestamp();
-						MainDialog->InsertFormattedText(YELLOW, _c("Found slot configuration data; uploading...\r\n"));
+						MainDialog->InsertFormattedText(YELLOW, "Found slot configuration data; uploading...\r\n");
 
 						for (unsigned i = 0; i < 10; i++) {
 
@@ -1823,7 +1870,7 @@ BOOL CronusZen::FlashConfig(void)
 
 	// Read SlotConfig file
 	char SlotConfigFileName[MAX_PATH] = "";
-	wsprintfA(SlotConfigFileName, _c("SlotConfig//%i.dat"), Cronus.SlotToWrite);
+	wsprintfA(SlotConfigFileName, "SlotConfig//%i.dat", Cronus.SlotToWrite);
 
 	// Set SlotConfig file
 	HANDLE SlotConfigFile = CreateFileA(SlotConfigFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -1837,13 +1884,13 @@ BOOL CronusZen::FlashConfig(void)
 		// Attempt to dump data
 		if (!ReadFile(SlotConfigFile, InputData, sizeof(InputData), &BytesRead, NULL)) {
 			MainDialog->Timestamp();
-			MainDialog->InsertFormattedText(RED, _c("Failed read slot config file for %s!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName);
+			MainDialog->InsertFormattedText(RED, "Failed read slot config file for %s!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName);
 			FailedToRead = TRUE;
 		}
 		else {
 			if (BytesRead != sizeof(InputData)) {
 				MainDialog->Timestamp();
-				MainDialog->InsertFormattedText(RED, _c("Reading slot config file for %s returned bytes read mismatch!\r\n"), Cronus.Slot[Cronus.SlotToWrite].FileName);
+				MainDialog->InsertFormattedText(RED, "Reading slot config file for %s returned bytes read mismatch!\r\n", Cronus.Slot[Cronus.SlotToWrite].FileName);
 				FailedToRead = TRUE;
 			}
 			else {
@@ -1929,6 +1976,9 @@ void CronusZen::CircleTest(BYTE x, BYTE y, WORD Speed)
 void CronusZen::FragmentRead(void)
 {
 	Communication::OutgoingPacket FragmentRead(PKT_FRAGMENTREAD);
+
+	MainDialog->Timestamp();
+	MainDialog->InsertFormattedText(GRAY, "Requesting device state...\r\n");
 
 	FragmentRead.Finalize(0, 1);
 }

@@ -59,9 +59,6 @@
     <ClInclude Include="MainDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Crypt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Emulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,7 +93,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\justi\Desktop\zpplogo.bmp">
+    <Image Include="transparent.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

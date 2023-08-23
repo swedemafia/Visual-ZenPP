@@ -4,7 +4,7 @@
 
 // Definitions:
 #define VERSION_MAJOR 2
-#define VERSION_MINOR 1
+#define VERSION_MINOR 2
 
 #define BLACK 0
 #define WHITE RGB(0xFF, 0xFF, 0xFF)

@@ -156,7 +156,6 @@
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="Communication.h" />
     <ClInclude Include="CronusZen.h" />
-    <ClInclude Include="Crypt.h" />
     <ClInclude Include="DialogManager.h" />
     <ClInclude Include="Emulator.h" />
     <ClInclude Include="Functions.h" />
