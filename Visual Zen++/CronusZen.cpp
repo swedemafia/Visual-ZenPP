@@ -671,8 +671,10 @@ void CronusZen::OnReadSlotsCfg(void)
 					*(DWORD*)(Cronus.Slot[i].FileName + 59) = 'nib.';
 				}
 				else {
-					if (*(DWORD*)(Cronus.Slot[i].FileName + FileNameLength - 4) == 'cpg.')
+					if (*(DWORD*)(Cronus.Slot[i].FileName + FileNameLength - 4) == 'cpg.') {
 						*(DWORD*)(Cronus.Slot[i].FileName + FileNameLength - 4) = 'nib.';
+						*(DWORD*)(Cronus.Slot[i].FilePath + FileNameLength - 4) = 'nib.';
+					}
 				}
 
 			}
